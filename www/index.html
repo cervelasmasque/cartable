@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no">
+<meta name="theme-color" content="#EAF6FF">
+<title>Cartable</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--sky:#EAF6FF;--ink:#1D2B53;--muted:#51608A;--paper:#FFFFFF;--star:#FFB400;--good:#27B36A;--bad:#F2545B;--line:rgba(29,43,83,.08);color-scheme:light}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%}
+body{font-family:"Baloo 2",ui-rounded,"Nunito","Segoe UI",Roboto,system-ui,sans-serif;font-size:18px;line-height:1.35;color:var(--ink);background-color:var(--sky);background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:26px 26px;-webkit-user-select:none;user-select:none;-webkit-text-size-adjust:100%}
+input,textarea,select{-webkit-user-select:text;user-select:text}
+#app{max-width:540px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 14px) 16px calc(env(safe-area-inset-bottom,0px) + 28px)}
+.h1{font-size:28px;font-weight:800;line-height:1.1;margin:0;letter-spacing:-.01em}
+.h2{font-size:22px;font-weight:700;margin:12px 0}
+.sub{color:var(--muted);font-weight:600;margin:2px 0 0}
+.btn{font:inherit;font-weight:700;color:var(--ink);background:var(--paper);border:3px solid var(--ink);border-radius:16px;padding:10px 16px;box-shadow:0 5px 0 var(--ink);cursor:pointer;transition:transform .07s ease,box-shadow .07s ease;touch-action:manipulation}
+.btn:active:not(:disabled){transform:translateY(4px);box-shadow:0 1px 0 var(--ink)}
+.btn:focus-visible,.link:focus-visible{outline:3px dashed var(--ink);outline-offset:3px}
+.btn:disabled{cursor:default}
+.btn.primary{background:var(--star)}
+.btn.big{font-size:21px;padding:14px 22px}
+.btn.wide{width:100%;margin-top:20px}
+.btn.danger{background:#FFE1E2}
+.btn.icon{width:52px;height:52px;padding:0;font-size:24px;border-radius:50%;flex:none}
+.link{font:inherit;font-weight:700;background:none;border:0;color:var(--muted);padding:10px 4px;cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+
+/* Accueil */
+.top{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.avatar{width:62px;height:62px;flex:none;display:grid;place-items:center;font-size:36px;background:var(--paper);border:3px solid var(--ink);border-radius:50%;box-shadow:0 4px 0 var(--ink)}
+.hello{flex:1;min-width:0}
+.hello .h1{font-size:24px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.streak{font-weight:700;color:#D9480F}
+.pill{flex:none;font-weight:800;font-size:20px;background:var(--paper);border:3px solid var(--ink);border-radius:999px;padding:4px 14px;box-shadow:0 4px 0 var(--ink)}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tile{background:var(--c);border-radius:26px;min-height:156px;padding:14px 16px;display:flex;flex-direction:column;align-items:flex-start;justify-content:space-between;text-align:left}
+.tiles .tile:nth-child(1){transform:rotate(-2deg)}
+.tiles .tile:nth-child(2){transform:rotate(1.5deg)}
+.tiles .tile:nth-child(3){transform:rotate(1deg)}
+.tiles .tile:nth-child(4){transform:rotate(-1.5deg)}
+.tiles .tile:active{transform:translateY(4px) rotate(0)}
+.te{font-size:46px;line-height:1}
+.tn{font-size:23px;font-weight:800;line-height:1.05}
+.ts{font-size:15px;font-weight:700;background:rgba(255,255,255,.7);border-radius:999px;padding:1px 10px}
+.album{display:flex;align-items:center;gap:14px;width:100%;margin-top:28px;text-align:left;border-radius:22px}
+.album b{font-size:20px}
+.album small{color:var(--muted);font-weight:600;font-size:15px}
+.next{font-size:36px;width:58px;height:58px;display:grid;place-items:center;border:3px dashed var(--ink);border-radius:14px;flex:none}
+.ghost{filter:grayscale(1) brightness(.4);opacity:.35}
+.count{margin-left:auto;font-weight:800}
+.foot{display:flex;justify-content:space-between;margin-top:22px}
+
+/* Matière */
+.bar{display:flex;align-items:center;gap:12px;margin-bottom:20px}
+.themes{display:flex;flex-direction:column;gap:14px}
+.trow{display:flex;align-items:center;gap:14px;text-align:left;border-radius:20px;padding:12px 14px;border-left-width:14px;border-left-color:var(--c)}
+.tre{font-size:32px;flex:none}
+.trn{flex:1;font-size:20px;line-height:1.15}
+.trn small{display:block;font-size:14px;color:var(--muted);font-weight:600;margin-top:2px}
+.trs{flex:none;font-size:20px;letter-spacing:1px}
+.on{color:var(--star);-webkit-text-stroke:1.5px var(--ink)}
+.off{color:#D5DDEA}
+
+/* Exercice */
+.prog{flex:1;display:flex;gap:4px}
+.prog i{flex:1;height:14px;border:2px solid var(--ink);border-radius:6px;background:var(--paper)}
+.prog i.ok{background:var(--good)}
+.prog i.ko{background:var(--bad)}
+.prog i.cur{background:var(--star)}
+.lvl{flex:none;font-weight:800;font-size:15px;background:var(--c);border:2px solid var(--ink);border-radius:999px;padding:2px 10px}
+.card{position:relative;background:var(--paper);border:3px solid var(--ink);border-radius:24px;box-shadow:0 6px 0 var(--ink);padding:20px 18px 14px;text-align:center}
+.aitag{position:absolute;top:-14px;right:14px;background:#E9E2FF;border:2px solid var(--ink);border-radius:999px;font-size:13px;font-weight:700;padding:0 10px}
+.hint{margin:0 0 6px;color:var(--muted);font-weight:600;font-size:16px}
+.bigemo{font-size:72px;line-height:1.1;margin:4px 0}
+.q{font-size:25px;font-weight:700;margin:4px 0 12px;line-height:1.25}
+.blank{display:inline-block;min-width:2.6em;border-bottom:4px solid var(--star);color:transparent}
+.tools{display:flex;justify-content:center;gap:10px;flex-wrap:wrap}
+.btn.mini,.btn.say{font-size:15px;padding:4px 12px;border-radius:999px;box-shadow:0 3px 0 var(--ink)}
+.btn.say{background:#FFF3C4}
+.btn.bigsay{font-size:22px;padding:12px 26px}
+.choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:22px}
+.choices.col{grid-template-columns:1fr}
+.choice{font-size:22px;min-height:66px;padding:10px 12px;line-height:1.15}
+.choice.ok{background:var(--good);color:#fff}
+.choice.ko{background:var(--bad);color:#fff}
+.choice.dim{opacity:.4}
+.display{margin:22px auto 14px;max-width:240px;min-height:66px;display:grid;place-items:center;font-size:36px;font-weight:800;background:var(--paper);border:3px solid var(--ink);border-radius:18px}
+.display.ok{background:var(--good);color:#fff}
+.display.ko{background:var(--bad);color:#fff}
+.display.pin{letter-spacing:10px;font-size:30px}
+.pad{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;max-width:340px;margin:0 auto}
+.btn.k{font-size:26px;min-height:60px;padding:0}
+.btn.k.go{background:var(--good);color:#fff}
+.spacer.on{height:240px}
+.sheet{position:fixed;left:0;right:0;bottom:0;z-index:20;border-top:3px solid var(--ink);padding:16px 16px calc(env(safe-area-inset-bottom,0px) + 18px);animation:up .22s ease-out}
+.sheet.good{background:#D5F5E3}
+.sheet.bad{background:#FFE1E2}
+.sheet-in{max-width:540px;margin:0 auto}
+.sh1{font-size:26px;font-weight:800;margin:0}
+.sh2{margin:4px 0 0;font-size:19px}
+.sh3{margin:6px 0 0;color:var(--muted);font-weight:600}
+.sheet .btn{width:100%;margin-top:14px}
+@keyframes up{from{transform:translateY(100%)}to{transform:none}}
+
+/* Résultat */
+.result{text-align:center;padding-top:30px}
+.center-t{text-align:center}
+.bigstars{font-size:84px;line-height:1;margin:18px 0 6px;display:flex;justify-content:center;gap:6px}
+.bigstars span{display:inline-block;animation:pop .45s cubic-bezier(.3,1.6,.5,1) both;animation-delay:var(--d)}
+.bigstars .on{-webkit-text-stroke:3px var(--ink)}
+@keyframes pop{from{transform:scale(0) rotate(-40deg);opacity:0}to{transform:none;opacity:1}}
+.score{font-size:22px;font-weight:700;margin:6px 0 18px}
+.banner{background:var(--paper);border:3px solid var(--ink);border-radius:18px;padding:12px 14px;margin:0 0 14px;font-weight:700}
+.banner.up{background:#E4F3FF}
+.banner.gift{background:#FFF3C4}
+.stk{font-size:34px;vertical-align:middle}
+.row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.row .btn{flex:1 1 160px}
+
+/* Autocollants */
+.album-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-top:16px}
+.stk-cell{aspect-ratio:1;display:grid;place-items:center;font-size:32px;border:3px dashed #9AA8C7;border-radius:16px;color:#9AA8C7;font-weight:800;background:rgba(255,255,255,.5)}
+.stk-cell.got{border:3px solid var(--ink);background:var(--paper);box-shadow:0 4px 0 var(--ink)}
+.stk-cell.got:nth-child(odd){transform:rotate(-4deg)}
+.stk-cell.got:nth-child(even){transform:rotate(3deg)}
+
+/* Premier lancement */
+.onboard{padding-top:40px;display:flex;flex-direction:column;gap:14px}
+.inp{font:inherit;font-size:20px;width:100%;padding:12px 14px;border:3px solid var(--ink);border-radius:14px;background:var(--paper);color:var(--ink)}
+.inp:focus{outline:3px solid var(--star)}
+.lbl{font-weight:700;margin:8px 0 0}
+.avs{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.btn.av{font-size:34px;padding:8px 0}
+.btn.av.sel{background:var(--star)}
+.shake{animation:shake .4s}
+@keyframes shake{25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+/* Chargement */
+.center{text-align:center;padding-top:80px}
+.spin{font-size:70px;display:inline-block;animation:bob 1s ease-in-out infinite alternate}
+@keyframes bob{to{transform:translateY(-14px) rotate(8deg)}}
+
+/* Parents */
+.psec{background:var(--paper);border:3px solid var(--ink);border-radius:18px;padding:14px 16px;margin-bottom:16px}
+.psec h2{font-size:20px;margin:0 0 8px}
+.psec .btn{font-size:16px}
+.pgroup h3{font-size:17px;margin:14px 0 6px}
+.prow{display:flex;align-items:center;gap:10px;justify-content:space-between;padding:6px 0;border-top:2px solid var(--line)}
+.prow span{font-weight:600;font-size:16px}
+.prow small{display:block;color:var(--muted);font-size:13px}
+.prow select{font:inherit;font-size:15px;border:2px solid var(--ink);border-radius:10px;padding:4px 6px;background:var(--paper);color:var(--ink)}
+.note{font-size:15px;color:var(--muted);margin:6px 0}
+.fl{display:block;font-weight:700;font-size:15px;margin:10px 0}
+.fl .inp{margin-top:4px;font-size:16px}
+.chk{display:flex;align-items:center;gap:10px;font-weight:700;margin:10px 0}
+.chk input{width:24px;height:24px;accent-color:var(--good)}
+.ta{min-height:90px;font-size:13px;font-family:ui-monospace,Menlo,monospace}
+.hist{margin:0;padding-left:20px;font-size:15px}
+.err{color:var(--bad);font-weight:700}
+
+/* Bibliothèque */
+.album.shelf{margin-top:14px}
+.shelf .next{border-style:solid;background:#FFF3C4}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:4px 2px 12px;margin-bottom:4px}
+.btn.tab{flex:none;font-size:16px;padding:6px 14px;border-radius:999px;box-shadow:0 3px 0 var(--ink)}
+.btn.tab.sel{background:var(--star)}
+.books{display:flex;flex-direction:column;gap:14px}
+.book{display:flex;gap:14px;background:var(--paper);border:3px solid var(--ink);border-radius:20px;padding:12px;box-shadow:0 4px 0 var(--ink)}
+.cover{flex:none;width:64px;height:86px;border:3px solid var(--ink);border-radius:6px 14px 14px 6px;background:var(--c);display:grid;place-items:center;font-size:32px;box-shadow:inset 8px 0 0 rgba(29,43,83,.18)}
+.bbody{flex:1;min-width:0}
+.bbody h3{margin:0;font-size:19px;line-height:1.15}
+.ba{margin:0;color:var(--muted);font-size:14px;font-weight:600}
+.bp{margin:4px 0 0;font-size:15px;line-height:1.3}
+.bn{margin:4px 0 0;font-size:13px;color:#B4441B;font-weight:700}
+.bact{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:8px}
+.age{font-size:13px;font-weight:800;border:2px solid var(--ink);border-radius:999px;padding:0 8px}
+.chip{font:inherit;font-size:14px;font-weight:700;color:var(--ink);background:var(--paper);border:2px solid var(--ink);border-radius:999px;padding:2px 10px;cursor:pointer}
+.chip.sel{background:var(--good);color:#fff}
+.addbook{margin-top:18px}
+.addbook .row{margin-top:8px}
+.addbook select{font:inherit;font-size:16px;border:3px solid var(--ink);border-radius:14px;padding:8px;background:var(--paper);color:var(--ink)}
+.empty{text-align:center;color:var(--muted);font-weight:600;padding:20px 10px}
+
+/* Défi, révisions, résumé */
+.today{display:grid;gap:12px;margin-bottom:20px}
+.btn.daily{display:flex;align-items:center;gap:12px;text-align:left;background:var(--star);border-radius:20px}
+.btn.daily.done{background:#FFE7A3}
+.btn.daily.rev{background:#CFE8FF}
+.de-e{font-size:34px;flex:none}
+.daily b{font-size:20px}
+.daily small{font-weight:600;font-size:15px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center;margin:6px 0 10px}
+.kpis b{display:block;font-size:24px;line-height:1.1}
+.kpis small{display:block;font-size:13px;color:var(--muted);font-weight:600;line-height:1.15}
+.ta.words{min-height:140px;font-size:15px}
+.btn.filebtn{display:inline-block;margin-top:10px}
+.bookmsg{margin-bottom:14px}
+
+#fx{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:50}
+#fx i{position:absolute;top:-20px;width:10px;height:14px;border-radius:3px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(540deg)}}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="fx"></div>
+<script>
+'use strict';
+/* ================= Outils ================= */
+const rnd=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+const norm=x=>String(x).trim().toLowerCase().replace(/[’]/g,"'").replace(/\s+/g,' ');
+const clone=o=>JSON.parse(JSON.stringify(o));
+function qcm(q,answer,distractors,extra){answer=String(answer);const d=[...new Set(distractors.map(String))].filter(x=>norm(x)!==norm(answer));return Object.assign({type:'qcm',q,answer,choices:shuffle([answer,...shuffle(d).slice(0,3)])},extra||{});}
+function num(q,answer,extra){return Object.assign({type:'num',q,answer:String(answer)},extra||{});}
+function near(n,spread,min,max){min=min||0;if(max==null)max=Infinity;const s=new Set();let g=0;while(s.size<3&&g++<300){const d=n+rnd(-spread,spread);if(d!==n&&d>=min&&d<=max)s.add(d);}return [...s];}
+function ttsOk(){return !!(window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.TextToSpeech)||('speechSynthesis' in window);}
+
+/* ================= Maths ================= */
+function genNombres(L){
+  const max=[0,100,500,1000][L];const t=rnd(0,3);
+  if(t===0){
+    const base=rnd(10,max-10),spread=Math.max(9,Math.round(max/12));
+    const all=[base,...near(base,spread,1,max-1)];const big=Math.random()<.6;
+    return qcm(big?'Quel est le plus grand nombre ?':'Quel est le plus petit nombre ?',big?Math.max(...all):Math.min(...all),all);
+  }
+  if(t===1){
+    let n=rnd(2,max-2);
+    if(L>=2&&Math.random()<.5)n=rnd(1,Math.floor(max/10)-1)*10+(Math.random()<.5?9:0);
+    const after=n%10===9?true:n%10===0?false:Math.random()<.5;
+    return after?num(`Quel nombre vient juste après ${n} ?`,n+1):num(`Quel nombre vient juste avant ${n} ?`,n-1);
+  }
+  if(t===2){
+    if(L===1){const n=rnd(11,99),d=Math.floor(n/10),u=n%10,ex=`${n} = ${d} dizaines et ${u} unités.`;
+      return Math.random()<.5?num(`Quel est le chiffre des dizaines dans ${n} ?`,d,{explain:ex}):num(`${d} dizaines et ${u} unités, ça fait quel nombre ?`,n,{explain:ex});}
+    const n=rnd(101,max-1),c=Math.floor(n/100),d=Math.floor(n/10)%10,u=n%10,ex=`${n} = ${c} centaines, ${d} dizaines et ${u} unités.`,k=rnd(0,2);
+    if(k===0)return num(`${c} centaines, ${d} dizaines et ${u} unités, ça fait quel nombre ?`,n,{explain:ex});
+    if(k===1)return num(`Quel est le chiffre des dizaines dans ${n} ?`,d,{explain:ex});
+    return num(`Quel est le chiffre des centaines dans ${n} ?`,c,{explain:ex});
+  }
+  const st=pick(L===1?[2,5,10]:L===2?[10,20,50]:[25,50,100]);
+  const start=st*rnd(0,Math.max(1,Math.floor(max/st)-5));
+  return num(`Continue la suite : ${[0,1,2,3].map(i=>start+i*st).join(', ')}, … ?`,start+4*st,{explain:`On ajoute ${st} à chaque fois.`});
+}
+function genAddSub(L){
+  const add=Math.random()<.5;let a,b;
+  if(L===1){
+    if(add){const t1=rnd(1,8),t2=rnd(0,9-t1),u1=rnd(0,8),u2=rnd(1,9-u1);a=t1*10+u1;b=t2*10+u2;}
+    else{a=rnd(2,9)*10+rnd(1,9);const t=rnd(0,Math.floor(a/10)-1);let u=rnd(0,a%10);if(t===0&&u===0)u=1;b=t*10+u;}
+  }else if(L===2){if(add){a=rnd(15,69);b=rnd(12,99-a);}else{a=rnd(30,99);b=rnd(11,a-6);}}
+  else{if(add){a=rnd(120,750);b=rnd(25,999-a);}else{a=rnd(200,999);b=rnd(25,a-40);}}
+  const r=add?a+b:a-b,op=add?'+':'−';
+  return num(`${a} ${op} ${b} = ?`,r,{explain:`${a} ${op} ${b} = ${r}`});
+}
+function genLivrets(L){
+  const a=pick(L===1?[2,5,10]:L===2?[2,3,4,5,10]:[2,3,4,5,6,7,8,9,10]),b=rnd(2,10),r=a*b;
+  if(L===3&&Math.random()<.4)return num(`${a} × ? = ${r}`,b,{explain:`${a} × ${b} = ${r}`});
+  return Math.random()<.5?num(`${a} × ${b} = ?`,r,{explain:`${a} × ${b} = ${r}`}):num(`${b} × ${a} = ?`,r,{explain:`${b} × ${a} = ${r}`});
+}
+function genMental(L){
+  const F={
+    double:m=>{const n=rnd(2,m);return num(`Quel est le double de ${n} ?`,2*n,{explain:`${n} + ${n} = ${2*n}`});},
+    moitie:m=>{const n=2*rnd(2,m);return num(`Quelle est la moitié de ${n} ?`,n/2,{explain:`${n/2} + ${n/2} = ${n}`});},
+    comp:(t,step)=>{const n=step*rnd(1,t/step-1);return num(`${n} + ? = ${t}`,t-n,{explain:`${n} + ${t-n} = ${t}`});},
+    plus:(d,lo,hi)=>{const n=rnd(lo,hi),s=Math.random()<.5,r=s?n+d:n-d;return num(`${n} ${s?'+':'−'} ${d} = ?`,r,{explain:`On ${s?'ajoute':'enlève'} ${d===10?'une dizaine':'une centaine'} : ${r}.`});}
+  };
+  const o=L===1?[()=>F.double(10),()=>F.comp(10,1),()=>F.plus(10,20,89)]
+    :L===2?[()=>F.double(50),()=>F.moitie(50),()=>F.comp(100,10),()=>F.comp(100,5),()=>F.plus(10,100,489)]
+    :[()=>F.double(250),()=>F.moitie(100),()=>F.comp(100,1),()=>F.plus(100,150,850),()=>F.plus(10,300,980)];
+  return pick(o)();
+}
+const KIDS=[['Léo','il'],['Emma','elle'],['Noah','il'],['Mia','elle'],['Lucas','il'],['Zoé','elle'],['Nathan','il'],['Lina','elle']];
+function genProblemes(L){
+  const [N,p]=pick(KIDS),P=cap(p);
+  const R=L===1?[5,30,2,15]:L===2?[20,80,10,50]:[100,500,20,200];
+  const T=[
+    ()=>{const a=rnd(R[0],R[1]),b=rnd(R[2],R[3]);return num(`${N} a ${a} billes. À la récré, ${p} en gagne ${b}. Combien de billes a-t-${p} maintenant ?`,a+b,{explain:`${a} + ${b} = ${a+b}`});},
+    ()=>{const a=rnd(R[0],R[1]),b=rnd(R[2],R[3]);return num(`Dans le tram, il y a ${a} personnes. À l'arrêt, ${b} personnes montent. Combien y a-t-il de personnes dans le tram ?`,a+b,{explain:`${a} + ${b} = ${a+b}`});},
+    ()=>{const b=rnd(R[2],R[3]),a=b+rnd(R[2],R[1]);return num(`${N} a ${a} francs d'économies. ${P} achète un jeu à ${b} francs. Combien lui reste-t-il ?`,a-b,{explain:`${a} − ${b} = ${a-b}`});},
+    ()=>{const b=rnd(R[2],R[3]),a=b+rnd(R[2],R[1]);return num(`Dans une boîte, il y a ${a} perles. ${N} en utilise ${b} pour un bracelet. Combien de perles reste-t-il ?`,a-b,{explain:`${a} − ${b} = ${a-b}`});}
+  ];
+  if(L===2)T.push(()=>{const a=rnd(2,5),b=pick([2,5,10]);return num(`Il y a ${a} boîtes de ${b} crayons. Combien de crayons y a-t-il en tout ?`,a*b,{explain:`${a} × ${b} = ${a*b}`});});
+  if(L===3)T.push(
+    ()=>{const a=rnd(2,6),b=rnd(3,10);return num(`Il y a ${a} boîtes de ${b} œufs. Combien d'œufs y a-t-il en tout ?`,a*b,{explain:`${a} × ${b} = ${a*b}`});},
+    ()=>{const a=rnd(2,5),b=rnd(3,10);return num(`${N} achète ${a} paquets de ${b} cartes. Combien de cartes a-t-${p} ?`,a*b,{explain:`${a} × ${b} = ${a*b}`});},
+    ()=>{const a=rnd(2,5),b=rnd(2,10);return num(`On partage ${a*b} bonbons entre ${a} enfants. Combien de bonbons reçoit chaque enfant ?`,b,{explain:`${a} × ${b} = ${a*b}, donc chacun reçoit ${b} bonbons.`});}
+  );
+  return pick(T)();
+}
+
+/* ================= Français ================= */
+const IRR={'être':['suis','es','est','sommes','êtes','sont'],'avoir':['ai','as','a','avons','avez','ont'],'aller':['vais','vas','va','allons','allez','vont'],'faire':['fais','fais','fait','faisons','faites','font']};
+const PRON=[['je'],['tu'],['il','elle','on'],['nous'],['vous'],['ils','elles']];
+function conj(v,p){if(IRR[v])return IRR[v][p];const st=v.slice(0,-2);if(p===3&&v.endsWith('ger'))return st+'eons';return st+['e','es','e','ons','ez','ent'][p];}
+function genConj(L){
+  const pool=L===1?['jouer','chanter','parler','danser','regarder','être','avoir']
+    :L===2?['jouer','chanter','aimer','écouter','sauter','être','avoir','aller','faire']
+    :['aimer','écouter','manger','nager','arriver','être','avoir','aller','faire'];
+  const v=pick(pool),p=rnd(0,5),pr=pick(PRON[p]),ans=conj(v,p);
+  const el=p===0&&/^[aeiouéèêh]/i.test(ans),subj=el?"J'":cap(pr)+' ';
+  return qcm(`${subj}___ (${v})`,ans,[0,1,2,3,4,5].map(i=>conj(v,i)),{hint:'Complète avec le verbe au présent.',explain:`${subj}${ans}.`});
+}
+const HP={a:['a','à'],et:['et','est'],son:['son','sont'],on:['on','ont']};
+const HEX={a:"« a » peut être remplacé par « avait ». Sinon, on écrit « à ».",et:"« est » peut être remplacé par « était ». « et » veut dire « et puis ».",son:"« sont » peut être remplacé par « étaient ». « son » peut être remplacé par « mon ».",on:"« ont » peut être remplacé par « avaient ». « on » peut être remplacé par « il »."};
+const HOMO=[
+  ['a','Léo ___ un chien noir.','a'],['a',"Je vais ___ l'école.",'à'],['a','Mia ___ très faim.','a'],['a','Nous jouons ___ la balle.','à'],
+  ['a','Papa ___ une nouvelle voiture.','a'],['a','Elle habite ___ Genève.','à'],['a','Le chat ___ attrapé une souris.','a'],['a','On se retrouve ___ midi.','à'],
+  ['a','Mon frère ___ neuf ans.','a'],['a','Il donne un bonbon ___ son ami.','à'],
+  ['et','Le ciel ___ tout bleu.','est'],["et","J'ai un chat ___ un chien.",'et'],['et','Ma sœur ___ en vacances.','est'],['et','Il mange une pomme ___ une poire.','et'],
+  ['et',"Le Jet d'eau ___ très haut.",'est'],['et','Zoé ___ Lucas sont amis.','et'],['et','Cette glace ___ délicieuse.','est'],['et','Je prends mon sac ___ ma veste.','et'],
+  ['son','Les enfants ___ dans la cour.','sont'],['son','Noah range ___ cartable.','son'],['son','Mes amis ___ très gentils.','sont'],['son','Elle promène ___ chien.','son'],
+  ['son','Les fleurs ___ jolies.','sont'],['son','Il cherche ___ ballon partout.','son'],
+  ['on','Ils ___ gagné le match.','ont'],['on','___ va au parc cet après-midi ?','on'],['on','Les oiseaux ___ des plumes.','ont'],["on","Demain, ___ part en course d'école.",'on'],
+  ['on','Mes parents ___ une grande table.','ont'],['on','Quand il pleut, ___ reste à la maison.','on']
+];
+function genHomo(L){
+  const allowed=L===1?['a','et']:L===2?['son','on']:['a','et','son','on'];
+  const it=pick(HOMO.filter(h=>allowed.includes(h[0])));
+  const start=it[1].startsWith('___');let ch=HP[it[0]].slice(),ans=it[2];
+  if(start){ch=ch.map(cap);ans=cap(ans);}
+  return {type:'qcm',q:it[1],choices:ch,answer:ans,hint:'Choisis le bon mot.',explain:HEX[it[0]]};
+}
+const RS="On ajoute un s.",RX="Les mots en -eau et -eu prennent un x.",RAL="Les mots en -al deviennent -aux.",RSZ="Les mots qui finissent par s, x ou z ne changent pas.",ROU="Bijou, caillou, chou, genou, hibou, joujou et pou prennent un x. Les autres mots en -ou prennent un s.";
+const PL=[
+  [1,'un chat','chats',['chat','chatx'],RS],[1,'une fleur','fleurs',['fleur','fleurx'],RS],[1,'une table','tables',['table','tablex'],RS],[1,'un vélo','vélos',['vélo','vélox'],RS],
+  [1,'un bateau','bateaux',['bateaus','bateau'],RX],[1,'un gâteau','gâteaux',['gâteaus','gâteau'],RX],[1,'un oiseau','oiseaux',['oiseaus','oiseau'],RX],
+  [2,'un cheval','chevaux',['chevals','chevaus'],RAL],[2,'un journal','journaux',['journals','journales'],RAL],[2,'un animal','animaux',['animals','animales'],RAL],
+  [2,'un jeu','jeux',['jeus','jeu'],RX],[2,'un cheveu','cheveux',['cheveus','cheveu'],RX],
+  [2,'une souris','souris',['sourises','sourix'],RSZ],[2,'un nez','nez',['nezs','nezes'],RSZ],[2,'un prix','prix',['prixs','prixes'],RSZ],
+  [3,'un bijou','bijoux',['bijous','bijou'],ROU],[3,'un genou','genoux',['genous','genou'],ROU],[3,'un hibou','hiboux',['hibous','hibou'],ROU],[3,'un caillou','cailloux',['caillous','caillou'],ROU],
+  [3,'un chou','choux',['chous','chou'],ROU],[3,'un trou','trous',['troux','trou'],ROU],[3,'un clou','clous',['cloux','clou'],ROU],[3,'un festival','festivals',['festivaux','festival'],"Attention : festival est une exception, on écrit festivals."]
+];
+function genPluriel(L){
+  let pool=PL.filter(x=>x[0]<=L);const same=pool.filter(x=>x[0]===L);if(Math.random()<.6)pool=same;
+  const it=pick(pool);return qcm(`Au pluriel : ${it[1]} → des ___`,it[2],it[3],{explain:it[4]});
+}
+const NAT=[
+  ['Le petit chat dort.','chat','nom'],['Le petit chat dort.','dort','verbe'],['Le petit chat dort.','petit','adjectif'],['Le petit chat dort.','Le','déterminant'],
+  ['Ma sœur mange une pomme rouge.','mange','verbe'],['Ma sœur mange une pomme rouge.','pomme','nom'],['Ma sœur mange une pomme rouge.','rouge','adjectif'],['Ma sœur mange une pomme rouge.','une','déterminant'],
+  ['Le grand arbre pousse vite.','arbre','nom'],['Le grand arbre pousse vite.','grand','adjectif'],['Le grand arbre pousse vite.','pousse','verbe'],
+  ['Les enfants jouent dans le jardin.','jouent','verbe'],['Les enfants jouent dans le jardin.','jardin','nom'],['Les enfants jouent dans le jardin.','Les','déterminant'],
+  ['Un joli oiseau chante.','joli','adjectif'],['Un joli oiseau chante.','chante','verbe'],['Un joli oiseau chante.','oiseau','nom'],['Un joli oiseau chante.','Un','déterminant'],
+  ['Mon frère lit un livre passionnant.','frère','nom'],['Mon frère lit un livre passionnant.','lit','verbe'],['Mon frère lit un livre passionnant.','passionnant','adjectif'],['Mon frère lit un livre passionnant.','Mon','déterminant'],
+  ['La neige blanche tombe.','neige','nom'],['La neige blanche tombe.','tombe','verbe'],['La neige blanche tombe.','blanche','adjectif'],['La neige blanche tombe.','La','déterminant'],
+  ['Papa prépare une bonne soupe.','prépare','verbe'],['Papa prépare une bonne soupe.','bonne','adjectif'],['Papa prépare une bonne soupe.','soupe','nom']
+];
+const NEX={nom:"Un nom désigne une personne, un animal ou une chose.",verbe:"Le verbe dit ce que l'on fait.",adjectif:"L'adjectif dit comment est le nom.",'déterminant':"Le déterminant est le petit mot devant le nom."};
+function genNature(L){
+  const cats=L===1?['nom','verbe']:L===2?['nom','verbe','adjectif']:['nom','verbe','adjectif','déterminant'];
+  const it=pick(NAT.filter(n=>cats.includes(n[2])));
+  return {type:'qcm',q:`« ${it[0]} » Le mot « ${it[1]} » est…`,choices:cats.slice(),answer:it[2],explain:NEX[it[2]]};
+}
+function genAlpha(L){
+  let w;
+  if(L===1)w=shuffle(['pomme','ballon','chat','vélo','maison','arbre','table','lune','fraise','jardin','radio','soleil','neige','école','zèbre','kiwi','dragon','ours','igloo','gomme']).slice(0,4);
+  else{const G=L===2?[['balle','bleu','brosse','biche','bol'],['camion','citron','cloche','crayon','cube'],['mardi','melon','mouton','minute','mur'],['parc','pied','poule','prune','plage'],['sable','sirop','souris','sucre','serpent']]
+    :[['chat','chaise','chaud','chapeau','chanter','charbon'],['mouton','moto','mouche','montagne','moule','morceau'],['banane','bague','bain','barbe','balle','bateau'],['pomme','poule','porte','poisson','pont','poche'],['train','trois','tracteur','trésor','trompette','trousse']];
+    w=shuffle(pick(G)).slice(0,4);}
+  const sorted=w.slice().sort((a,b)=>a.localeCompare(b,'fr')),first=Math.random()<.7;
+  return {type:'qcm',q:first?'Quel mot vient en premier dans le dictionnaire ?':'Quel mot vient en dernier dans le dictionnaire ?',choices:w,answer:first?sorted[0]:sorted[sorted.length-1],explain:'Dans l\'ordre : '+sorted.join(', ')+'.'};
+}
+
+/* ================= Allemand ================= */
+const DE={
+  farben:[{de:'rot',fr:'rouge',e:'🔴'},{de:'blau',fr:'bleu',e:'🔵'},{de:'gelb',fr:'jaune',e:'🟡'},{de:'grün',fr:'vert',e:'🟢'},{de:'schwarz',fr:'noir',e:'⚫'},{de:'weiss',fr:'blanc',e:'⚪'},{de:'orange',fr:'orange',e:'🟠'},{de:'braun',fr:'brun',e:'🟤'},{de:'lila',fr:'violet',e:'🟣'},{de:'rosa',fr:'rose',e:'🌸'}],
+  familie:[{de:'die Mutter',fr:'la mère',e:'👩'},{de:'der Vater',fr:'le père',e:'👨'},{de:'der Bruder',fr:'le frère',e:'👦'},{de:'die Schwester',fr:'la sœur',e:'👧'},{de:'die Oma',fr:'la grand-mère',e:'👵'},{de:'der Opa',fr:'le grand-père',e:'👴'},{de:'das Baby',fr:'le bébé',e:'👶'}],
+  tiere:[{de:'der Hund',fr:'le chien',e:'🐶'},{de:'die Katze',fr:'le chat',e:'🐱'},{de:'das Pferd',fr:'le cheval',e:'🐴'},{de:'die Maus',fr:'la souris',e:'🐭'},{de:'der Vogel',fr:"l'oiseau",e:'🐦'},{de:'der Fisch',fr:'le poisson',e:'🐟'},{de:'die Kuh',fr:'la vache',e:'🐮'},{de:'das Schwein',fr:'le cochon',e:'🐷'},{de:'die Ente',fr:'le canard',e:'🦆'},{de:'der Bär',fr:"l'ours",e:'🐻'}],
+  schule:[{de:'der Bleistift',fr:'le crayon',e:'✏️'},{de:'das Buch',fr:'le livre',e:'📕'},{de:'das Heft',fr:'le cahier',e:'📒'},{de:'die Schere',fr:'les ciseaux',e:'✂️'},{de:'die Schultasche',fr:'le cartable',e:'🎒'},{de:'das Lineal',fr:'la règle',e:'📏'},{de:'die Uhr',fr:"l'horloge",e:'🕒'}],
+  hallo:[{de:'Hallo',fr:'Salut'},{de:'Tschüss',fr:'Au revoir'},{de:'Guten Morgen',fr:'Bonjour (le matin)'},{de:'Gute Nacht',fr:'Bonne nuit'},{de:'Danke',fr:'Merci'},{de:'Bitte',fr:"S'il te plaît"},{de:'Ja',fr:'Oui'},{de:'Nein',fr:'Non'}]
+};
+const ZAHL=['null','eins','zwei','drei','vier','fünf','sechs','sieben','acht','neun','zehn','elf','zwölf','dreizehn','vierzehn','fünfzehn','sechzehn','siebzehn','achtzehn','neunzehn','zwanzig'];
+function genVocab(list){return L=>{
+  const it=pick(list),o=list.filter(x=>x!==it),say={text:it.de,lang:'de-DE'};
+  const lab=x=>(x.e?x.e+' ':'')+x.fr,noun=/^(der|die|das) /.test(it.de);
+  if(L===3){const r=Math.random();
+    if(noun&&r<.35){const art=it.de.split(' ')[0],w=it.de.slice(art.length+1);
+      return {type:'qcm',q:`___ ${w}`,choices:['der','die','das'],answer:art,big:it.e,hint:'der, die ou das ?',explain:`On dit « ${it.de} ».`,sayAfter:say};}
+    if(ttsOk()&&r<.8)return qcm('Écoute et choisis la bonne réponse.',lab(it),o.map(lab),{say,autoSay:true,listen:true,explain:`« ${it.de} » veut dire ${it.fr}.`});
+  }
+  if(L>=2)return qcm(`Que veut dire « ${it.de} » ?`,lab(it),o.map(lab),{say,explain:`« ${it.de} » veut dire ${it.fr}.`});
+  return qcm(`Comment dit-on « ${it.fr} » en allemand ?`,it.de,o.map(x=>x.de),{big:it.e,sayAfter:say,explain:`${cap(it.fr)} se dit « ${it.de} ».`});
+};}
+function genZahlen(L){
+  const n=rnd(0,L===1?10:20),w=ZAHL[n],say={text:w,lang:'de-DE'},others=near(n,4,0,20);
+  if(L===3){const r=Math.random();
+    if(r<.4){const a=rnd(1,10),b=rnd(1,10),s=a+b;return qcm(`${ZAHL[a]} + ${ZAHL[b]} = ?`,ZAHL[s],near(s,3,0,20).map(x=>ZAHL[x]),{explain:`${a} + ${b} = ${s}, en allemand « ${ZAHL[s]} ».`,sayAfter:{text:ZAHL[s],lang:'de-DE'}});}
+    if(ttsOk()&&r<.8)return qcm('Écoute et choisis le bon nombre.',n,others,{say,autoSay:true,listen:true,explain:`« ${w} » = ${n}.`});
+  }
+  if(L>=2)return qcm(`Quel nombre est « ${w} » ?`,n,others,{say,explain:`« ${w} » = ${n}.`});
+  return qcm(`Comment dit-on ${n} en allemand ?`,w,others.map(x=>ZAHL[x]),{big:String(n),sayAfter:say,explain:`${n} se dit « ${w} ».`});
+}
+
+/* ================= Histoire et géo ================= */
+function bankGen(items){return L=>{
+  let pool=items.filter(x=>x[0]<=L);const same=pool.filter(x=>x[0]===L);if(same.length&&Math.random()<.55)pool=same;
+  const it=pick(pool);return qcm(it[1],it[2],it[3],{explain:it[4]||''});
+};}
+const HG_GE=[
+  [1,'Quel grand lac se trouve à Genève ?','Le Léman',['Le lac de Neuchâtel','Le lac de Constance','Le lac Majeur'],"On l'appelle aussi le lac de Genève."],
+  [1,"Quel monument envoie de l'eau très haut dans la rade ?","Le Jet d'eau",["L'Horloge fleurie",'La cathédrale','Le Palais des Nations'],"Le Jet d'eau est le symbole de Genève."],
+  [1,'Quel fleuve sort du Léman à Genève ?','Le Rhône',['Le Rhin','La Seine','Le Danube'],'Le Rhône traverse Genève puis continue en France.'],
+  [1,'Quelle montagne voit-on juste à côté de Genève, en France ?','Le Salève',['Le Cervin','Le Pilate','La Jungfrau'],'On l\'appelle parfois le « balcon de Genève ».'],
+  [1,'Avec quel pays Genève a-t-il la plus longue frontière ?','La France',["L'Italie","L'Allemagne","L'Autriche"],'Genève est presque entièrement entouré par la France.'],
+  [2,'Quelle rivière rejoint le Rhône à la Jonction ?',"L'Arve",["L'Aar",'La Sarine','La Reuss'],"À la Jonction, on voit l'eau grise de l'Arve à côté de l'eau bleue du Rhône."],
+  [2,'Quel est le seul canton suisse voisin de Genève ?','Vaud',['Valais','Fribourg','Neuchâtel'],'Genève touche la Suisse seulement par le canton de Vaud.'],
+  [2,'Dans quel quartier se trouve la cathédrale Saint-Pierre ?','La Vieille-Ville',['Les Pâquis','Carouge','Plainpalais'],'Elle domine la ville depuis la colline de la Vieille-Ville.'],
+  [2,"Où se trouve l'Horloge fleurie ?",'Au Jardin anglais',['Au parc des Bastions',"À l'aéroport","Au bord de l'Arve"],'Elle est faite de milliers de fleurs.'],
+  [3,'Combien de communes compte le canton de Genève ?','45',['12','26','100'],'La plus grande est la Ville de Genève.'],
+  [3,'Quelle grande organisation a un siège au Palais des Nations ?',"L'ONU",['La FIFA','Le CIO',"L'UEFA"],"L'Organisation des Nations unies y a son siège européen."],
+  [3,"Environ quelle hauteur atteint le Jet d'eau ?",'140 mètres',['14 mètres','40 mètres','1400 mètres'],"C'est à peu près la hauteur d'un immeuble de 45 étages."]
+];
+const HG_CH=[
+  [1,'Combien de cantons compte la Suisse ?','26',['12','20','45'],'Genève est l\'un des 26 cantons.'],
+  [1,'Quand fête-t-on la fête nationale suisse ?','Le 1er août',['Le 14 juillet','Le 25 décembre','Le 1er mai'],'On allume des feux et des lampions.'],
+  [1,'Comment est le drapeau suisse ?','Une croix blanche sur fond rouge',['Une croix rouge sur fond blanc','Des bandes rouges et blanches','Une étoile blanche sur fond rouge'],'Une croix rouge sur fond blanc, c\'est le symbole de la Croix-Rouge.'],
+  [1,'Quelle est la monnaie de la Suisse ?','Le franc suisse',["L'euro",'Le dollar','La livre'],'On paie en francs et en centimes.'],
+  [2,'Combien de langues nationales a la Suisse ?','4',['2','3','5'],'Allemand, français, italien et romanche.'],
+  [2,'Dans quelle ville siègent le gouvernement et le Parlement suisses ?','Berne',['Zurich','Genève','Lausanne'],'Berne est la ville fédérale.'],
+  [2,'Quelle langue parle-t-on surtout à Zurich ?',"L'allemand",['Le français',"L'italien",'Le romanche'],'À la maison, beaucoup de gens y parlent le suisse allemand.'],
+  [2,'Dans quel canton parle-t-on surtout italien ?','Le Tessin',['Vaud','Berne','Zoug'],'Le Tessin est au sud des Alpes.'],
+  [3,'Quel est le plus haut sommet de Suisse ?','La pointe Dufour',['Le Cervin','La Jungfrau','Le Salève'],'Elle mesure 4634 mètres, dans le Valais.'],
+  [3,'Dans quel canton parle-t-on aussi le romanche ?','Les Grisons',['Le Jura','Genève','Le Tessin'],'Le romanche est la quatrième langue nationale.'],
+  [3,'Quel est le plus grand lac entièrement en Suisse ?','Le lac de Neuchâtel',['Le Léman','Le lac de Constance','Le lac de Zurich'],'Le Léman est plus grand, mais il est partagé avec la France.'],
+  [3,'Quel fleuve naît dans les Alpes suisses et finit dans la mer du Nord ?','Le Rhin',['Le Rhône','Le Pô',"L'Arve"],'Le Rhin passe à Bâle avant de quitter la Suisse.']
+];
+const HG_T=[
+  [1,'Combien de jours y a-t-il dans une semaine ?','7',['5','10','12'],''],
+  [1,'Combien de mois y a-t-il dans une année ?','12',['10','7','52'],''],
+  [1,'Combien de saisons y a-t-il ?','4',['2','3','12'],'Printemps, été, automne et hiver.'],
+  [1,'Quel jour vient après mercredi ?','Jeudi',['Mardi','Vendredi','Lundi'],''],
+  [1,'Quel mois vient après avril ?','Mai',['Mars','Juin','Juillet'],''],
+  [2,"Hier, c'était lundi. Quel jour sommes-nous aujourd'hui ?",'Mardi',['Dimanche','Mercredi','Lundi'],''],
+  [2,'En quelle saison est Noël ?',"L'hiver",["L'été",'Le printemps',"L'automne"],''],
+  [2,'Quel mois est le plus court ?','Février',['Janvier','Avril','Décembre'],'Il a 28 jours, ou 29 certaines années.'],
+  [2,'Combien de minutes y a-t-il dans une heure ?','60',['100','30','24'],''],
+  [2,'Qui est né en premier ?','Le grand-père',['Le papa',"L'enfant",'Le bébé'],'Les grands-parents sont nés avant les parents, qui sont nés avant les enfants.'],
+  [3,"Combien d'années dure un siècle ?",'100',['10','1000','50'],''],
+  [3,"Combien d'années dure une décennie ?",'10',['100','5','12'],''],
+  [3,'Combien de jours y a-t-il dans une année ?','365',['300','100','52'],'Certaines années en ont 366 : ce sont les années bissextiles.'],
+  [3,'Sur une frise du temps, où place-t-on les événements les plus anciens ?','Au début, à gauche',['À la fin, à droite','Au milieu',"N'importe où"],'On lit une frise de gauche à droite, du plus ancien au plus récent.']
+];
+const HG_H=[
+  [1,'Quelle fête genevoise rappelle une attaque repoussée en 1602 ?',"L'Escalade",['Le 1er août','Le carnaval','La fête des vignerons'],"On fête l'Escalade chaque année en décembre."],
+  [1,"Pour l'Escalade, on casse une marmite en…",'Chocolat',['Bois','Verre','Pain'],''],
+  [1,"Selon la légende, qu'a lancé la Mère Royaume sur un soldat ?",'Une marmite de soupe',['Une pierre',"Un seau d'eau",'Une chaise'],"C'est pour ça qu'on casse une marmite en chocolat."],
+  [1,'Il y a très longtemps, au bord du lac, sur quoi étaient construites certaines maisons ?','Sur des pilotis',['Sur des roues','Dans les arbres','Sur des bateaux'],'Ces villages s\'appellent des palafittes.'],
+  [2,"Qui attaquait Genève pendant l'Escalade ?",'Les soldats du duc de Savoie',['Les Romains','Les Vikings','Napoléon'],''],
+  [2,"Comment s'appelait Genève à l'époque romaine ?",'Genava',['Lutèce','Lugdunum','Aventicum'],'Lutèce était Paris, et Lugdunum, Lyon.'],
+  [2,"Quelle organisation d'aide aux blessés a été créée à Genève ?",'La Croix-Rouge',["L'ONU",'La FIFA',"L'Unicef"],'Elle a été créée en 1863.'],
+  [2,'Quel objet précieux fabrique-t-on à Genève depuis des siècles ?','Des montres',['Des voitures','Des avions','Des ordinateurs'],''],
+  [3,'En quelle année Genève est-elle entrée dans la Confédération suisse ?','1815',['1291','1602','1950'],''],
+  [3,'Qui a fondé la Croix-Rouge ?','Henry Dunant',['Jean Calvin','Guillaume Tell','Jean-Jacques Rousseau'],'Henry Dunant était genevois. Il a reçu le premier prix Nobel de la paix.'],
+  [3,'Quel célèbre réformateur a vécu à Genève au 16e siècle ?','Jean Calvin',['Napoléon','Charlemagne','Guillaume Tell'],'On le voit sur le mur des Réformateurs, au parc des Bastions.'],
+  [3,'Quel écrivain célèbre est né à Genève en 1712 ?','Jean-Jacques Rousseau',['Victor Hugo','Jean de La Fontaine','Molière'],'']
+];
+const HG_O=[
+  [1,'Où se lève le soleil ?',"À l'est",["À l'ouest",'Au nord','Au sud'],''],
+  [1,'Où se couche le soleil ?',"À l'ouest",["À l'est",'Au nord','Au sud'],''],
+  [1,'Quel objet indique le nord ?','Une boussole',['Une montre','Une règle','Une loupe'],''],
+  [1,'Sur une carte, où est le nord en général ?','En haut',['En bas','À gauche','À droite'],''],
+  [2,'Quel est le contraire du nord ?','Le sud',["L'est","L'ouest",'Le nord-est'],''],
+  [2,"Quel est le contraire de l'est ?","L'ouest",['Le nord','Le sud','Le nord-ouest'],''],
+  [2,"Si le nord est en haut de la carte, où est l'est ?",'À droite',['À gauche','En bas','En haut'],''],
+  [2,'Sur un plan, comment s\'appelle la boîte qui explique les symboles ?','La légende',['Le titre','La boussole','Le sommaire'],''],
+  [3,"Tu regardes vers le nord. Qu'y a-t-il derrière toi ?",'Le sud',["L'est","L'ouest",'Le nord'],''],
+  [3,'Quelle direction se trouve entre le nord et l\'est ?','Le nord-est',['Le sud-est','Le nord-ouest','Le sud-ouest'],''],
+  [3,'En Suisse, à midi, de quel côté se trouve le soleil ?','Au sud',['Au nord',"À l'est","À l'ouest"],''],
+  [3,'Genève se trouve à quelle extrémité de la Suisse ?',"À l'ouest",["À l'est",'Au nord','Au sud'],'Genève est le canton le plus à l\'ouest de la Suisse.']
+];
+
+/* ================= Matières ================= */
+const DEHINT="Vocabulaire d'allemand de 5P. Questions en français. Mots allemands en orthographe suisse (ss, jamais ß), noms avec der/die/das.";
+const SUBJ=[
+  {id:'maths',name:'Maths',emoji:'🧮',color:'#FF8A5B',themes:[
+    {id:'nombres',name:'Les nombres',emoji:'🔢',gen:genNombres,ai:"nombres jusqu'à 1000 : comparer, ranger, décomposer en centaines, dizaines, unités, suites"},
+    {id:'addsub',name:'Additions et soustractions',emoji:'➕',gen:genAddSub,ai:'additions et soustractions jusqu\'à 1000, avec et sans retenue'},
+    {id:'livrets',name:'Les livrets',emoji:'✖️',gen:genLivrets,ai:'livrets de multiplication de 2 à 10'},
+    {id:'mental',name:'Calcul mental',emoji:'🧠',gen:genMental,ai:'calcul mental : doubles, moitiés, compléments à 10 et à 100'},
+    {id:'problemes',name:'Petits problèmes',emoji:'🧺',gen:genProblemes,ai:'petits problèmes de la vie de tous les jours (achats en francs, partages, groupements)'}]},
+  {id:'fr',name:'Français',emoji:'📖',color:'#A58BFF',themes:[
+    {id:'conj',name:'Conjugaison au présent',emoji:'✍️',gen:genConj,ai:'conjugaison au présent : être, avoir, aller, faire et verbes en -er'},
+    {id:'homo',name:'a / à, et / est, son / sont…',emoji:'🔀',gen:genHomo,ai:'homophones a/à, et/est, son/sont, on/ont dans une phrase à trou'},
+    {id:'pluriel',name:'Singulier et pluriel',emoji:'📚',gen:genPluriel,ai:'pluriel des noms (s, x, -al/-aux, -ou)'},
+    {id:'nature',name:'Nom, verbe ou adjectif ?',emoji:'🏷️',gen:genNature,ai:'nature des mots : nom, verbe, adjectif, déterminant'},
+    {id:'alpha',name:'Ordre alphabétique',emoji:'🔤',gen:genAlpha,ai:'ordre alphabétique et dictionnaire'}]},
+  {id:'de',name:'Allemand',emoji:'🥨',color:'#FFD04D',themes:[
+    {id:'hallo',name:'Dire bonjour',emoji:'👋',gen:genVocab(DE.hallo),ai:DEHINT+' Thème : saluer, remercier, oui, non.'},
+    {id:'zahlen',name:'Les nombres',emoji:'🔟',gen:genZahlen,ai:DEHINT+' Thème : les nombres de 0 à 20.'},
+    {id:'farben',name:'Les couleurs',emoji:'🎨',gen:genVocab(DE.farben),ai:DEHINT+' Thème : les couleurs.'},
+    {id:'familie',name:'La famille',emoji:'👪',gen:genVocab(DE.familie),ai:DEHINT+' Thème : la famille.'},
+    {id:'tiere',name:'Les animaux',emoji:'🐾',gen:genVocab(DE.tiere),ai:DEHINT+' Thème : les animaux.'},
+    {id:'schule',name:"L'école",emoji:'🎒',gen:genVocab(DE.schule),ai:DEHINT+" Thème : le matériel d'école."},
+    {id:'semaine',name:'Mes mots de la semaine',emoji:'📅',gen:L=>genVocab(S.words)(L),ai:()=>DEHINT+' Utilise uniquement ces mots de la semaine : '+S.words.map(w=>w.de+' = '+w.fr).join(', ')+'.'}]},
+  {id:'hg',name:'Histoire et géo',emoji:'🗺️',color:'#4CCB86',themes:[
+    {id:'geneve',name:'Genève, mon canton',emoji:'⛲',gen:bankGen(HG_GE),ai:'géographie du canton de Genève (lac, rivières, quartiers, monuments, voisins)'},
+    {id:'suisse',name:'La Suisse',emoji:'🏔️',gen:bankGen(HG_CH),ai:'la Suisse : cantons, langues, symboles, montagnes, lacs'},
+    {id:'temps',name:'Le temps qui passe',emoji:'⏳',gen:bankGen(HG_T),ai:'le temps : jours, mois, saisons, heures, frise chronologique, générations'},
+    {id:'histoire',name:'Histoire de Genève',emoji:'🏰',gen:bankGen(HG_H),ai:"histoire de Genève racontée aux enfants (palafittes, Romains, Escalade, Croix-Rouge)"},
+    {id:'orientation',name:"S'orienter",emoji:'🧭',gen:bankGen(HG_O),ai:'points cardinaux, lire un plan, légende, boussole'}]}
+];
+function findTheme(k){const [a,b]=k.split('.');const s=SUBJ.find(x=>x.id===a);return s?s.themes.find(t=>t.id===b):null;}
+
+/* ================= Bibliothèque ================= */
+const BCAT={bd:{n:'BD',e:'💬',c:'#FF8A5B'},manga:{n:'Mangas',e:'🎌',c:'#A58BFF'},roman:{n:'Romans',e:'📘',c:'#4CCB86'}};
+const BOOKS=[
+  {id:'asterix',cat:'bd',e:'🏺',t:'Astérix',a:'Goscinny et Uderzo',p:'Un petit Gaulois malin et son copain Obélix tiennent tête aux Romains.',age:'8+'},
+  {id:'tintin',cat:'bd',e:'🔍',t:'Les Aventures de Tintin',a:'Hergé',p:'Un jeune reporter et son chien Milou partent à l\'aventure autour du monde.',age:'8+'},
+  {id:'ariol',cat:'bd',e:'🎒',t:'Ariol',a:'Emmanuel Guibert et Marc Boutavant',p:'Un petit âne rêveur raconte sa vie d\'écolier. Très drôle.',age:'7+'},
+  {id:'adele',cat:'bd',e:'😈',t:'Mortelle Adèle',a:'Mr Tan et Miss Prickly',p:'Une fillette insolente et son chat Ajax : des gags à la chaîne.',age:'8+'},
+  {id:'kidpaddle',cat:'bd',e:'🎮',t:'Kid Paddle',a:'Midam',p:'Un fan de jeux vidéo et ses copains, en gags d\'une page.',age:'8+'},
+  {id:'nelson',cat:'bd',e:'🔥',t:'Nelson',a:'Christophe Bertschy',p:'Un petit diable orange qui sème la pagaille à la maison.',age:'8+'},
+  {id:'schtroumpfs',cat:'bd',e:'🍄',t:'Les Schtroumpfs',a:'Peyo',p:'Des petits lutins bleus face au méchant Gargamel.',age:'7+'},
+  {id:'luckyluke',cat:'bd',e:'🤠',t:'Lucky Luke',a:'Morris et Goscinny',p:'Le cow-boy qui tire plus vite que son ombre contre les Dalton.',age:'8+'},
+  {id:'bouleetbill',cat:'bd',e:'🐶',t:'Boule et Bill',a:'Roba',p:'Un garçon et son cocker, les meilleurs amis du monde.',age:'7+'},
+  {id:'legendaires',cat:'bd',e:'🗡️',t:'Les Légendaires',a:'Patrick Sobral',p:'Des héros de légende retransformés en enfants : aventure et humour.',age:'9+'},
+  {id:'yotsuba',cat:'manga',e:'🍀',t:'Yotsuba&!',a:'Kiyohiko Azuma',p:'Une petite fille très curieuse découvre le monde. Plein de tendresse.',age:'7+'},
+  {id:'chi',cat:'manga',e:'🐱',t:'Chi, une vie de chat',a:'Konami Kanata',p:'Un chaton perdu trouve une nouvelle famille.',age:'7+'},
+  {id:'doraemon',cat:'manga',e:'🤖',t:'Doraemon',a:'Fujiko F. Fujio',p:'Un chat-robot venu du futur aide un garçon avec ses gadgets.',age:'7+'},
+  {id:'totoro',cat:'manga',e:'🌳',t:'Mon voisin Totoro',a:'Hayao Miyazaki (Studio Ghibli)',p:'Deux sœurs rencontrent un esprit de la forêt géant et doux.',age:'7+'},
+  {id:'pokemon',cat:'manga',e:'⚡',t:'Pokémon, la grande aventure',a:'Hidenori Kusaka',p:'Un jeune dresseur part attraper et entraîner des Pokémon.',age:'8+'},
+  {id:'tsubasa',cat:'manga',e:'⚽',t:'Captain Tsubasa',a:'Yoichi Takahashi',p:'Le manga de foot qui a inspiré le dessin animé « Olive et Tom ».',age:'8+'},
+  {id:'inazuma',cat:'manga',e:'🥅',t:'Inazuma Eleven',a:'Tenya Yabuno',p:'Une équipe de foot de collège avec des tirs spéciaux incroyables.',age:'8+'},
+  {id:'dragonball',cat:'manga',e:'🐉',t:'Dragon Ball',a:'Akira Toriyama',p:'Son Goku part à la recherche des sept boules de cristal.',age:'10+',note:'Beaucoup de combats et quelques gags osés : plutôt pour plus tard.'},
+  {id:'nicolas',cat:'roman',e:'🏫',t:'Le Petit Nicolas',a:'Goscinny et Sempé',p:'Les bêtises d\'un écolier et de sa bande de copains.',age:'7+'},
+  {id:'cabanemagique',cat:'roman',e:'🌲',t:'La Cabane magique',a:'Mary Pope Osborne',p:'Deux enfants voyagent dans le temps grâce aux livres d\'une cabane.',age:'7+'},
+  {id:'buveur',cat:'roman',e:'🖋️',t:'Le Buveur d\'encre',a:'Éric Sanvoisin',p:'Un garçon rencontre un vampire qui boit l\'encre des livres.',age:'7+'},
+  {id:'geronimo',cat:'roman',e:'🐭',t:'Geronimo Stilton',a:'Elisabetta Dami',p:'Une souris journaliste vit des aventures pleines d\'humour.',age:'7+'},
+  {id:'broca',cat:'roman',e:'🧙',t:'Contes de la rue Broca',a:'Pierre Gripari',p:'Des contes drôles avec des sorcières, des géants et des fées.',age:'8+'},
+  {id:'charlie',cat:'roman',e:'🍫',t:'Charlie et la chocolaterie',a:'Roald Dahl',p:'Un ticket d\'or pour visiter l\'usine de chocolat la plus folle du monde.',age:'8+'},
+  {id:'renard',cat:'roman',e:'🦊',t:'Fantastique Maître Renard',a:'Roald Dahl',p:'Un renard rusé contre trois fermiers méchants.',age:'8+'},
+  {id:'cabane13',cat:'roman',e:'🏗️',t:'La Cabane à 13 étages',a:'Andy Griffiths et Terry Denton',p:'Une cabane dans les arbres complètement délirante, avec plein de dessins.',age:'8+'},
+  {id:'clubcinq',cat:'roman',e:'🗺️',t:'Le Club des Cinq',a:'Enid Blyton',p:'Quatre enfants et un chien résolvent des mystères.',age:'8+'},
+  {id:'harold',cat:'roman',e:'🐲',t:'Harold et les dragons',a:'Cressida Cowell',p:'Un jeune Viking pas très costaud doit apprendre à dresser un dragon.',age:'9+'},
+  {id:'degonfle',cat:'roman',e:'📓',t:'Journal d\'un dégonflé',a:'Jeff Kinney',p:'Le journal plein de dessins d\'un collégien malchanceux.',age:'9+'},
+  {id:'harrypotter',cat:'roman',e:'🦉',t:'Harry Potter à l\'école des sorciers',a:'J. K. Rowling',p:'Un garçon découvre qu\'il est sorcier et entre à Poudlard.',age:'9+',note:'Assez long : idéal à lire à deux au début.'}
+];
+let bookTab='bd',bookMsg='';
+const BOOK_STARS=5;
+const allBooks=()=>BOOKS.concat(S.myBooks||[]);
+function bookCard(b){const st=S.books[b.id];
+  return `<article class="book" style="--c:${BCAT[b.cat].c}"><div class="cover" aria-hidden="true">${b.e}</div><div class="bbody"><h3>${esc(b.t)}</h3>${b.a?`<p class="ba">${esc(b.a)}</p>`:''}${b.p?`<p class="bp">${esc(b.p)}</p>`:''}${b.note?`<p class="bn">${esc(b.note)}</p>`:''}
+  <div class="bact">${b.age?`<span class="age">${b.age}</span>`:`<span class="age">${BCAT[b.cat].n}</span>`}<button class="chip ${st==='envie'?'sel':''}" data-a="bstat" data-v="${b.id}|envie">📖 Envie</button><button class="chip ${st==='lu'?'sel':''}" data-a="bstat" data-v="${b.id}|lu">✅ Lu</button>${b.custom?`<button class="chip" data-a="bdel" data-v="${b.id}">Retirer</button>`:''}</div></div></article>`;}
+function vBooks(){const msg=bookMsg;bookMsg='';
+  const lus=Object.values(S.books).filter(v=>v==='lu').length;
+  const tabs=[['bd','💬 BD'],['manga','🎌 Mangas'],['roman','📘 Romans'],['liste','⭐ Ma liste']];
+  let list,extra='';
+  if(bookTab==='liste'){
+    list=allBooks().filter(b=>S.books[b.id]).sort((a,b)=>(S.books[a.id]==='envie'?0:1)-(S.books[b.id]==='envie'?0:1));
+    extra=`<section class="psec addbook"><h2>Ajouter un livre</h2><input id="b-title" class="inp" maxlength="60" placeholder="Titre du livre"><div class="row"><select id="b-cat" aria-label="Type de livre"><option value="bd">BD</option><option value="manga">Manga</option><option value="roman">Roman</option></select><button class="btn" data-a="badd">Ajouter</button></div></section>`;
+  }else list=allBooks().filter(b=>b.cat===bookTab);
+  const cards=list.length?list.map(bookCard).join(''):`<p class="empty">Touche « Envie » sur un livre pour le retrouver ici.</p>`;
+  return `<header class="bar"><button class="btn icon" data-a="go" data-v="home" aria-label="Retour">←</button><div><h1 class="h1">Ma bibliothèque</h1><p class="sub">${lus?`📚 ${lus} livre${lus>1?'s':''} lu${lus>1?'s':''}`:'Des livres choisis pour ton âge'}</p></div></header>
+  ${msg?`<div class="banner gift bookmsg">${msg}</div>`:`<p class="note">Un livre lu et validé par un parent = +${BOOK_STARS} ⭐</p>`}
+  <div class="tabs">${tabs.map(([k,l])=>`<button class="btn tab ${bookTab===k?'sel':''}" data-a="btab" data-v="${k}">${l}</button>`).join('')}</div>
+  <div class="books">${cards}</div>${extra}`;}
+
+/* ================= Données ================= */
+const KEY='cartable5p_v1';
+const DEF={v:1,name:'',avatar:'🦊',pin:'',stars:0,streak:{count:0,last:''},themes:{},history:[],books:{},myBooks:[],review:{},words:[],bookStars:{},defi:'',settings:{sound:true,ai:false,apiKey:'',model:'claude-haiku-4-5-20251001'}};
+function mergeState(r){const d=clone(DEF);return Object.assign(d,r,{settings:Object.assign(d.settings,r.settings||{}),streak:Object.assign(d.streak,r.streak||{}),themes:r.themes||{},history:r.history||[],books:r.books||{},myBooks:r.myBooks||[]});}
+function load(){try{const r=JSON.parse(localStorage.getItem(KEY)||'null');if(r&&r.v)return mergeState(r);}catch(e){}return clone(DEF);}
+let S=load();
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+function rec(k){if(!S.themes[k])S.themes[k]={level:1,best:0,plays:0,correct:0,total:0};return S.themes[k];}
+const STICKERS=['🦊','🐼','🦁','🐯','🐨','🐸','🐙','🦄','🐲','🦖','🦕','🚀','🛸','⚽','🏆','🎸','🎨','🌋','🌈','⭐','🌙','☄️','🧩','🎲','🏰','⛵','🚂','🚁','🦈','🐳'];
+const STEP=6;
+const unlocked=()=>Math.min(STICKERS.length,Math.floor(S.stars/STEP));
+function dstr(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
+function bumpStreak(){const t=dstr(new Date()),y=dstr(new Date(Date.now()-864e5)),s=S.streak;if(s.last===t)return;s.count=s.last===y?s.count+1:1;s.last=t;}
+function streakAlive(){const t=dstr(new Date()),y=dstr(new Date(Date.now()-864e5));return S.streak.last===t||S.streak.last===y;}
+
+/* ================= Révisions espacées ================= */
+const RINT=[1,3,7];
+const today=()=>dstr(new Date());
+const addDays=n=>dstr(new Date(Date.now()+n*864e5));
+function storeQ(q){const o={};['type','q','answer','choices','explain','big','hint','say','sayAfter','listen','autoSay','ai'].forEach(k=>{if(q[k]!==undefined)o[k]=q[k];});return o;}
+function reviewMiss(key,q){const id=key+'|'+q.q+'|'+q.answer,old=S.review[id];S.review[id]={k:key,q:storeQ(q),b:0,due:addDays(1),n:(old?old.n:0)+1};}
+function reviewHit(id){const r=S.review[id];if(!r)return;r.b++;if(r.b>=RINT.length)delete S.review[id];else r.due=addDays(RINT[r.b]);}
+const dueList=()=>{const t=today();return Object.entries(S.review).filter(([,r])=>r.due<=t);};
+
+/* ================= Son et voix ================= */
+let AC=null;
+function tone(f,t0,d,type){const o=AC.createOscillator(),g=AC.createGain(),t=AC.currentTime+t0;o.type=type;o.frequency.value=f;g.gain.setValueAtTime(.0001,t);g.gain.exponentialRampToValueAtTime(.22,t+.02);g.gain.exponentialRampToValueAtTime(.0001,t+d);o.connect(g);g.connect(AC.destination);o.start(t);o.stop(t+d+.03);}
+function sfx(k){if(!S.settings.sound)return;try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+  const seq={ok:[[660,0,.15],[880,.12,.22]],ko:[[260,0,.18],[196,.15,.28]],end:[[523,0,.15],[659,.15,.25]],fanfare:[[523,0,.14],[659,.14,.14],[784,.28,.14],[1047,.42,.4]]}[k];
+  seq.forEach(([f,t,d])=>tone(f,t,d,k==='ko'?'sine':'triangle'));}catch(e){}}
+function speak(text,lang){
+  try{const P=window.Capacitor&&window.Capacitor.Plugins;if(P&&P.TextToSpeech){P.TextToSpeech.speak({text,lang,rate:.85,pitch:1,volume:1}).catch(()=>{});return;}}catch(e){}
+  try{if('speechSynthesis' in window){speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang=lang;u.rate=.85;const v=speechSynthesis.getVoices().find(v=>v.lang&&v.lang.toLowerCase().startsWith(lang.slice(0,2)));if(v)u.voice=v;speechSynthesis.speak(u);}}catch(e){}
+}
+try{if('speechSynthesis' in window)speechSynthesis.getVoices();}catch(e){}
+function confetti(){if(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)return;const fx=document.getElementById('fx'),cols=['#FF8A5B','#A58BFF','#FFD04D','#4CCB86','#3AA0FF'];
+  for(let i=0;i<60;i++){const d=document.createElement('i');d.style.left=Math.random()*100+'vw';d.style.background=pick(cols);d.style.animationDelay=Math.random()*.6+'s';d.style.animationDuration=(1.8+Math.random()*1.4)+'s';fx.appendChild(d);}
+  setTimeout(()=>{fx.innerHTML='';},3800);}
+
+/* ================= Questions IA ================= */
+const LVTXT={1:'facile (début de 5P)',2:'moyen (milieu de 5P)',3:'plus difficile (fin de 5P)'};
+async function aiQuestions(s,th,level,n){
+  const st=S.settings,ctrl=new AbortController(),to=setTimeout(()=>ctrl.abort(),20000);
+  const system="Tu crées des exercices pour un enfant de 9 ans en 5P HarmoS à Genève (Plan d'études romand). Réponds uniquement avec un objet JSON valide, sans aucun texte autour.";
+  const prompt=`Matière : ${s.name}\nThème : ${th.name} (${typeof th.ai==='function'?th.ai():th.ai})\nNiveau : ${LVTXT[level]}\n\nCrée ${n} questions à choix multiples, variées et amusantes.\nRègles :\n- français simple, phrases courtes, adapté à un enfant de 9 ans ;\n- une seule bonne réponse et 4 choix plausibles ;\n- uniquement des faits sûrs et vérifiables ;\n- pour l'allemand : orthographe suisse (ss, jamais ß) ;\n- une explication d'une phrase.\n\nFormat exact :\n{"questions":[{"q":"...","choices":["...","...","...","..."],"answer":"texte exact de la bonne réponse","explain":"..."}]}`;
+  try{
+    const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:ctrl.signal,headers:{'content-type':'application/json','x-api-key':st.apiKey.trim(),'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:(st.model||DEF.settings.model).trim(),max_tokens:2000,system,messages:[{role:'user',content:prompt}]})});
+    if(!res.ok){let m='erreur '+res.status;try{const j=await res.json();if(j.error&&j.error.message)m+=' ('+j.error.message+')';}catch(e){}throw new Error(m);}
+    const data=await res.json(),text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const j=JSON.parse(text.slice(text.indexOf('{'),text.lastIndexOf('}')+1));
+    return (j.questions||[]).filter(x=>x&&typeof x.q==='string'&&Array.isArray(x.choices)&&x.choices.length>=2&&x.choices.some(c=>norm(c)===norm(x.answer))).slice(0,n).map(x=>{
+      const ans=String(x.choices.find(c=>norm(c)===norm(x.answer))),others=x.choices.map(String).filter(c=>norm(c)!==norm(ans)).slice(0,3);
+      return {type:'qcm',q:x.q,choices:shuffle([ans,...others]),answer:ans,explain:typeof x.explain==='string'?x.explain:'',ai:true};});
+  }finally{clearTimeout(to);}
+}
+
+/* ================= Écrans ================= */
+const app=document.getElementById('app');
+let screen='home',curSubj='maths',SES=null,RES=null,pinBuf='',gateMsg='',testMsg='';
+const AVATARS=['🦊','🐼','🦁','🐯','🐸','🐙','🦖','🚀'];
+const PRAISE=['Bravo !','Super !','Génial !','Exact !','Trop fort !','Parfait !'];
+const OOPS=['Presque !','Pas tout à fait…','Oups !'];
+const starsHtml=n=>[0,1,2].map(i=>`<span class="${i<n?'on':'off'}">★</span>`).join('');
+function pad(mode){const p=mode==='pin'?'p':'';
+  return `<div class="pad">${[1,2,3,4,5,6,7,8,9].map(n=>`<button class="btn k" data-a="${p}key" data-v="${n}">${n}</button>`).join('')}<button class="btn k" data-a="${p}del" aria-label="Effacer">⌫</button><button class="btn k" data-a="${p}key" data-v="0">0</button><button class="btn k go" data-a="${p}ok">OK</button></div>`;}
+
+function vOnboard(){return `<div class="onboard"><h1 class="h1">Salut ! Comment tu t'appelles ?</h1>
+  <input id="nm" class="inp" maxlength="16" placeholder="Ton prénom" value="${esc(S.name)}" autocomplete="off">
+  <p class="lbl">Choisis ton personnage</p>
+  <div class="avs">${AVATARS.map(a=>`<button class="btn av ${a===S.avatar?'sel':''}" data-a="avatar" data-v="${a}">${a}</button>`).join('')}</div>
+  <button class="btn primary big" data-a="start">C'est parti !</button></div>`;}
+
+function vToday(){const due=dueList().length,done=S.defi===today();
+  return `<div class="today"><button class="btn daily ${done?'done':''}" data-a="defi"><span class="de-e">🎯</span><span><b>Défi du jour</b><br><small>${done?'Réussi aujourd’hui ! Tu peux le refaire.':'5 questions, +2 ⭐ bonus'}</small></span></button>${due?`<button class="btn daily rev" data-a="revision"><span class="de-e">🔁</span><span><b>Mes révisions</b><br><small>${due} question${due>1?'s':''} à revoir</small></span></button>`:''}</div>`;}
+function vHome(){
+  const un=unlocked(),nextIn=STEP-(S.stars%STEP),lusN=Object.values(S.books).filter(v=>v==='lu').length;
+  const streak=S.streak.count>=2&&streakAlive()?`<div class="streak">🔥 ${S.streak.count} jours de suite</div>`:`<div class="sub">Qu'est-ce qu'on révise ?</div>`;
+  const tiles=SUBJ.map(s=>{const got=s.themes.reduce((t,th)=>t+rec(s.id+'.'+th.id).best,0);
+    return `<button class="btn tile" style="--c:${s.color}" data-a="subj" data-v="${s.id}"><span class="te">${s.emoji}</span><span class="tn">${s.name}</span><span class="ts">★ ${got} / ${s.themes.length*3}</span></button>`;}).join('');
+  return `<header class="top"><div class="avatar">${S.avatar}</div><div class="hello"><div class="h1">Salut ${esc(S.name)} !</div>${streak}</div><div class="pill">⭐ ${S.stars}</div></header>
+  ${vToday()}
+  <div class="tiles">${tiles}</div>
+  <button class="btn album" data-a="go" data-v="stickers"><span class="next">${un<STICKERS.length?`<span class="ghost">${STICKERS[un]}</span>`:'🏆'}</span>
+    <span><b>Mes autocollants</b><br><small>${un<STICKERS.length?`Encore ${nextIn} ⭐ pour le prochain`:'Tu les as tous !'}</small></span><span class="count">${un}/${STICKERS.length}</span></button>
+  <button class="btn album shelf" data-a="go" data-v="books"><span class="next">📚</span><span><b>Ma bibliothèque</b><br><small>${lusN?`${lusN} livre${lusN>1?'s':''} lu${lusN>1?'s':''}`:'BD, mangas et romans pour toi'}</small></span></button>
+  <footer class="foot"><button class="link" data-a="sound">${S.settings.sound?'🔊 Son activé':'🔇 Son coupé'}</button><button class="link" data-a="parent">Espace parents</button></footer>`;
+}
+
+function vSubject(){const s=SUBJ.find(x=>x.id===curSubj);
+  return `<header class="bar"><button class="btn icon" data-a="go" data-v="home" aria-label="Retour">←</button><h1 class="h1">${s.emoji} ${s.name}</h1></header>
+  <div class="themes">${s.themes.map(th=>{const r=rec(s.id+'.'+th.id);
+    return `<button class="btn trow" style="--c:${s.color}" data-a="play" data-v="${s.id}.${th.id}"><span class="tre">${th.emoji}</span><span class="trn">${esc(th.name)}<small>${th.id==='semaine'&&S.words.length<4?'À remplir par un parent':'Niveau '+r.level+' sur 3'}</small></span><span class="trs">${starsHtml(r.best)}</span></button>`;}).join('')}</div>`;}
+
+function vLoading(){return `<div class="center"><div class="spin">${SES?SES.th.emoji:'✨'}</div><p class="h2">Je prépare tes questions…</p><button class="btn" data-a="cancelLoad">Annuler</button></div>`;}
+
+function vQuiz(){
+  const s=SES,q=s.cur;
+  const prog=Array.from({length:s.n},(_,i)=>`<i class="${i<s.marks.length?(s.marks[i]?'ok':'ko'):i===s.i?'cur':''}"></i>`).join('');
+  const qtxt=esc(q.q).replace('___','<span class="blank">___</span>');
+  let body='';
+  if(q.type==='qcm'){
+    const long=q.choices.some(c=>String(c).length>14);
+    body=`<div class="choices ${long?'col':''}">${q.choices.map((c,i)=>{let cls='';
+      if(s.answered)cls=norm(c)===norm(q.answer)?'ok':norm(c)===norm(s.last)?'ko':'dim';
+      return `<button class="btn choice ${cls}" data-a="choice" data-v="${i}" ${s.answered?'disabled':''}>${esc(c)}</button>`;}).join('')}</div>`;
+  }else{
+    const cls=s.answered?(s.lastOk?'ok':'ko'):'';
+    body=`<div class="display ${cls}">${esc(s.answered?s.last:s.buf)||'&nbsp;'}</div>${s.answered?'':pad('num')}`;
+  }
+  const audio=q.say?`<button class="btn say ${q.listen?'bigsay':''}" data-a="sayQ">🔊 ${q.listen?'Écouter':'Écouter en allemand'}</button>`:'';
+  const readBtn=q.listen?'':`<button class="btn mini" data-a="readQ" aria-label="Lire la question à voix haute">🗣️ Lire</button>`;
+  const sheet=s.answered?`<div class="sheet ${s.lastOk?'good':'bad'}" role="status"><div class="sheet-in"><p class="sh1">${s.msg}</p>${s.lastOk?'':`<p class="sh2">La bonne réponse : <b>${esc(q.answer)}</b></p>`}${q.explain?`<p class="sh3">${esc(q.explain)}</p>`:''}<button class="btn primary big" data-a="next">${s.i+1>=s.n?'Voir mon score':'Continuer'}</button></div></div>`:'';
+  return `<header class="bar"><button class="btn icon" data-a="quit" aria-label="Arrêter">✕</button><div class="prog">${prog}</div><span class="lvl" style="--c:${s.color}">${s.badge}</span></header>
+  <div class="card">${q.ai?'<span class="aitag">✨ question surprise</span>':''}${q.hint?`<p class="hint">${esc(q.hint)}</p>`:''}${q.big?`<div class="bigemo">${esc(q.big)}</div>`:''}<p class="q">${qtxt}</p><div class="tools">${audio}${readBtn}</div></div>
+  ${body}${sheet}<div class="spacer ${s.answered?'on':''}"></div>`;
+}
+
+function vResult(){const r=RES,t=['On réessaie ?','Pas mal !','Très bien !','Parfait !'][r.st];
+  return `<div class="result"><h1 class="h1">${t}</h1>
+  <div class="bigstars">${[0,1,2].map(i=>`<span class="${i<r.st?'on':'off'}" style="--d:${i*.25}s">★</span>`).join('')}</div>
+  <p class="score">${r.c} bonnes réponses sur ${r.n}</p>
+  ${r.lv===1?`<div class="banner up">🚀 Bravo, tu passes au niveau ${r.level} !</div>`:''}
+  ${r.lv===-1?`<div class="banner">On revient au niveau ${r.level} pour bien s'entraîner.</div>`:''}
+  ${r.news.length?`<div class="banner gift">Nouvel autocollant : <span class="stk">${r.news.join(' ')}</span></div>`:''}
+  ${r.bonus?`<div class="banner up">🎯 Défi du jour réussi : +${r.bonus} ⭐ bonus</div>`:''}
+  ${r.mode==='theme'?`<div class="row"><button class="btn primary big" data-a="play" data-v="${r.key}">Rejouer</button><button class="btn big" data-a="subj" data-v="${r.sid}">Autres exercices</button></div>`
+    :`<div class="row">${r.mode==='revision'&&dueList().length?`<button class="btn primary big" data-a="revision">Continuer les révisions</button>`:''}<button class="btn big" data-a="go" data-v="home">Retour à l’accueil</button></div>`}</div>`;}
+
+function vStickers(){const un=unlocked();
+  return `<header class="bar"><button class="btn icon" data-a="go" data-v="home" aria-label="Retour">←</button><h1 class="h1">Mes autocollants</h1></header>
+  <p class="sub">Tu gagnes un autocollant tous les ${STEP} ⭐.</p>
+  <div class="album-grid">${STICKERS.map((e,i)=>`<div class="stk-cell ${i<un?'got':''}">${i<un?e:'?'}</div>`).join('')}</div>`;}
+
+function vGate(){const set=!S.pin,bk=gatePurpose&&gatePurpose.type==='book'?allBooks().find(b=>b.id===gatePurpose.id):null;
+  const txt=bk?`Un parent confirme que ${esc(S.name)} a lu « ${esc(bk.t)} ».<br>${set?'Choisissez d’abord un code parent à 4 chiffres.':'Entrez le code parent.'}`
+    :(set?'Choisissez un code à 4 chiffres pour protéger cet espace.':'Entrez le code parent.');
+  return `<header class="bar"><button class="btn icon" data-a="go" data-v="${bk?'books':'home'}" aria-label="Retour">←</button><h1 class="h1">${bk?'Livre lu ?':'Espace parents'}</h1></header>
+  <p class="sub center-t">${txt}</p>
+  <div class="display pin">${'●'.repeat(pinBuf.length)+'○'.repeat(4-pinBuf.length)}</div>
+  ${gateMsg?`<p class="err center-t">${esc(gateMsg)}</p>`:''}${pad('pin')}`;}
+
+function vParent(){const st=S.settings;
+  const lv=SUBJ.map(s=>`<div class="pgroup"><h3>${s.emoji} ${s.name}</h3>${s.themes.map(th=>{const k=s.id+'.'+th.id,r=rec(k),pct=r.total?Math.round(100*r.correct/r.total)+' %':'pas encore joué';
+    return `<div class="prow"><span>${esc(th.name)}<small>${r.plays} partie${r.plays>1?'s':''}, réussite : ${pct}</small></span><select data-lv="${k}" aria-label="Niveau ${esc(th.name)}">${[1,2,3].map(n=>`<option value="${n}" ${r.level===n?'selected':''}>Niveau ${n}</option>`).join('')}</select></div>`;}).join('')}</div>`).join('');
+  const hist=S.history.slice(0,8).map(h=>{const th=findTheme(h.k);return `<li>${new Date(h.d).toLocaleDateString('fr-CH',{day:'numeric',month:'short'})} : ${esc(th?th.name:h.k==='defi'?'Défi du jour':h.k==='revision'?'Révisions':h.k)}, ${h.c}/${h.n}${h.l?` (niveau ${h.l})`:''}</li>`;}).join('')||'<li>Aucune partie pour le moment.</li>';
+  return `<header class="bar"><button class="btn icon" data-a="psave" aria-label="Enregistrer et revenir">←</button><h1 class="h1">Espace parents</h1></header>
+  <section class="psec"><h2>Enfant</h2><label class="fl">Prénom<input id="p-name" class="inp" maxlength="16" value="${esc(S.name)}"></label></section>
+  ${weekHtml()}
+  <section class="psec"><h2>Dernières parties</h2><ul class="hist">${hist}</ul></section>
+  <section class="psec"><h2>Niveaux</h2><p class="note">Le niveau monte tout seul après 8 bonnes réponses sur 10, et redescend à 4 sur 10 ou moins. Vous pouvez aussi le régler ici.</p>${lv}</section>
+  <section class="psec"><h2>Mots de la semaine (allemand)</h2><p class="note">Un mot par ligne, sous la forme « allemand = français ». Par exemple : der Hund = le chien. Il en faut au moins 4 pour le thème « Mes mots de la semaine ».</p>
+    <textarea id="p-words" class="inp ta words" aria-label="Mots de la semaine">${esc(S.words.map(w=>w.de+' = '+w.fr).join('\n'))}</textarea>
+    <label class="btn filebtn">📷 Lire une photo du Wort-Schatz<input type="file" id="p-photo" accept="image/*" hidden></label>
+    <p class="note" id="p-photomsg">La lecture de photo utilise la clé API de la section suivante.</p></section>
+  <section class="psec"><h2>Questions surprises (IA)</h2>
+    <p class="note">Si c'est activé et que le téléphone est connecté, 4 questions sur 10 sont créées par Claude. Sans connexion, l'app utilise seulement ses propres exercices.</p>
+    <label class="chk"><input type="checkbox" id="p-ai" ${st.ai?'checked':''}> Activer les questions surprises</label>
+    <label class="fl">Clé API Anthropic<input id="p-key" class="inp" type="password" value="${esc(st.apiKey)}" placeholder="sk-ant-…" autocomplete="off"></label>
+    <label class="fl">Modèle<input id="p-model" class="inp" value="${esc(st.model)}"></label>
+    <button class="btn" data-a="ptest">Tester la connexion</button><p class="note" id="p-test">${esc(testMsg)}</p>
+    <p class="note">La clé reste enregistrée sur ce téléphone. Fixez une limite de dépenses dans la console Anthropic.</p></section>
+  <section class="psec"><h2>Sauvegarde</h2><p class="note">Copiez ce texte pour garder la progression (sans la clé API ni le code parent). Pour restaurer, collez une sauvegarde puis touchez « Importer ».</p>
+    <textarea id="p-bak" class="inp ta"></textarea><div class="row"><button class="btn" data-a="pexport">Copier la sauvegarde</button><button class="btn" data-a="pimport">Importer</button></div><p class="note" id="p-bakmsg"></p></section>
+  <section class="psec"><h2>Réglages</h2><div class="row"><button class="btn" data-a="pchpin">Changer le code parent</button><button class="btn danger" data-a="preset">Remettre la progression à zéro</button></div></section>
+  <button class="btn primary big wide" data-a="psave">Enregistrer et revenir</button>`;}
+
+function render(){
+  if(!S.name&&screen!=='onboard'&&screen!=='gate'&&screen!=='parent')screen='onboard';
+  const f={onboard:vOnboard,home:vHome,subject:vSubject,loading:vLoading,quiz:vQuiz,result:vResult,stickers:vStickers,books:vBooks,gate:vGate,parent:vParent}[screen]||vHome;
+  app.innerHTML=f();
+  if(screen==='quiz'&&SES&&SES.cur.autoSay&&!SES.answered&&!SES.said){SES.said=true;const q=SES.cur;setTimeout(()=>speak(q.say.text,q.say.lang),350);}
+}
+function nav(s){screen=s;render();window.scrollTo(0,0);}
+
+/* ================= Partie ================= */
+function mkSes(o){return Object.assign({i:0,correct:0,marks:[],used:new Set(),ai:[],slots:[],cur:null,answered:false,buf:'',last:null,said:false,t0:Date.now(),level:0},o);}
+function themePool(){const all=[];SUBJ.forEach(s=>s.themes.forEach(th=>{const k=s.id+'.'+th.id;if(th.id==='semaine'&&S.words.length<4)return;const r=rec(k);all.push({k,th,r,acc:r.total?r.correct/r.total:.6});}));return all;}
+function startDefi(){
+  const list=shuffle(dueList()).slice(0,2).map(([id,r])=>({key:r.k,q:r.q,rid:id}));
+  const pool=themePool().sort((a,b)=>a.acc-b.acc).slice(0,6),seen=new Set(list.map(x=>x.q.q));let g=0;
+  while(list.length<5&&g++<200){const w=pick(pool),q=w.th.gen(w.r.level);if(seen.has(q.q))continue;seen.add(q.q);list.push({key:w.k,q});}
+  SES=mkSes({mode:'defi',key:'defi',list:shuffle(list),n:list.length,badge:'🎯 Défi',color:'#FFB400'});SES.cur=nextQ();nav('quiz');}
+function startRevision(){
+  const list=shuffle(dueList()).slice(0,10).map(([id,r])=>({key:r.k,q:r.q,rid:id}));if(!list.length){nav('home');return;}
+  SES=mkSes({mode:'revision',key:'revision',list,n:list.length,badge:'🔁 Révision',color:'#9FD3FF'});SES.cur=nextQ();nav('quiz');}
+async function startQuiz(key){
+  const [sid,tid]=key.split('.'),s=SUBJ.find(x=>x.id===sid),th=s.themes.find(x=>x.id===tid),r=rec(key);
+  const ses=mkSes({mode:'theme',key,s,th,level:r.level,n:10,badge:'Niv. '+r.level,color:s.color});
+  SES=ses;const st=S.settings;
+  if(st.ai&&st.apiKey&&navigator.onLine!==false){
+    nav('loading');
+    try{ses.ai=await aiQuestions(s,th,r.level,4);}catch(e){ses.ai=[];}
+    if(SES!==ses)return;
+  }
+  ses.slots=shuffle([1,2,3,4,5,6,7,8,9]).slice(0,ses.ai.length);
+  ses.cur=nextQ();nav('quiz');
+}
+function nextQ(){const s=SES;
+  if(s.list){const it=s.list[s.i];s.curKey=it.key;s.curRid=it.rid||null;return it.q;}
+  s.curKey=s.key;s.curRid=null;
+  if(s.slots.includes(s.i)&&s.ai.length){const q=s.ai.shift();s.used.add(q.q+'|'+q.answer);return q;}
+  let q;for(let t=0;t<25;t++){q=s.th.gen(s.level);if(!s.used.has(q.q+'|'+q.answer))break;}
+  s.used.add(q.q+'|'+q.answer);return q;}
+function answer(val){const s=SES;if(!s||s.answered)return;const q=s.cur,ok=norm(val)===norm(q.answer);
+  s.answered=true;s.last=String(val);s.lastOk=ok;s.marks.push(ok);if(ok)s.correct++;
+  const rc=rec(s.curKey);rc.total++;if(ok)rc.correct++;
+  if(ok){if(s.curRid)reviewHit(s.curRid);}else reviewMiss(s.curKey,q);s.msg=ok?pick(PRAISE):pick(OOPS);
+  sfx(ok?'ok':'ko');if(q.sayAfter)setTimeout(()=>speak(q.sayAfter.text,q.sayAfter.lang),350);render();}
+function nextStep(){const s=SES;if(!s)return;s.i++;if(s.i>=s.n){finish();return;}
+  s.cur=nextQ();s.answered=false;s.buf='';s.said=false;nav('quiz');}
+function finish(){const s=SES,c=s.correct,n=s.n,ratio=c/n,st=ratio>=.9?3:ratio>=.7?2:ratio>=.5?1:0;
+  let bonus=0;if(s.mode==='defi'&&S.defi!==today()){S.defi=today();bonus=2;}
+  const before=unlocked();S.stars+=st+bonus;const after=unlocked();
+  let lv=0,level=0;
+  if(s.mode==='theme'){const r=rec(s.key);r.best=Math.max(r.best,st);r.plays++;
+    if(c>=8&&r.level<3){r.level++;lv=1;}else if(c<=4&&r.level>1){r.level--;lv=-1;}level=r.level;}
+  bumpStreak();S.history.unshift({d:new Date().toISOString(),k:s.key,c,n,l:s.level,ms:Date.now()-s.t0});S.history=S.history.slice(0,120);save();
+  RES={st,c,n,lv,level,bonus,mode:s.mode,key:s.key,sid:s.s?s.s.id:null,news:STICKERS.slice(before,after)};
+  SES=null;nav('result');sfx(st===3?'fanfare':'end');if(st===3)confetti();}
+
+/* ================= Espace parents ================= */
+let gatePurpose=null;
+function checkPin(){if(pinBuf.length<4)return;
+  if(!S.pin){S.pin=pinBuf;save();}
+  else if(pinBuf!==S.pin){gateMsg='Code incorrect, réessayez.';pinBuf='';render();return;}
+  testMsg='';
+  if(gatePurpose&&gatePurpose.type==='book'){const id=gatePurpose.id;gatePurpose=null;validateBook(id);return;}
+  nav('parent');}
+function validateBook(id){const bk=allBooks().find(b=>b.id===id);S.books[id]='lu';
+  let msg=`📚 Bravo ! « ${esc(bk?bk.t:'Livre')} » est validé.`;
+  if(!S.bookStars[id]){S.bookStars[id]=1;const before=unlocked();S.stars+=BOOK_STARS;const news=STICKERS.slice(before,unlocked());
+    msg+=` +${BOOK_STARS} ⭐`+(news.length?`<br>Nouvel autocollant : <span class="stk">${news.join(' ')}</span>`:'');}
+  save();bookMsg=msg;sfx('fanfare');confetti();bookTab='liste';nav('books');}
+async function readPhoto(inp){const file=inp.files&&inp.files[0],m=document.getElementById('p-photomsg');if(!file)return;
+  const key=(document.getElementById('p-key').value||'').trim();
+  if(!key){m.textContent='Ajoutez d’abord une clé API dans la section « Questions surprises ».';inp.value='';return;}
+  m.textContent='Lecture de la photo…';
+  try{const b64=await shrink(file),words=await aiWords(b64,key);if(!words.length)throw new Error('aucun mot trouvé sur la photo');
+    const ta=document.getElementById('p-words'),cur=ta.value.trim();
+    ta.value=(cur?cur+'\n':'')+words.map(w=>w.de+' = '+w.fr).join('\n');
+    m.textContent=words.length+' mots ajoutés. Vérifiez-les, puis touchez « Enregistrer et revenir ».';}
+  catch(e){m.textContent='Échec : '+(e.name==='AbortError'?'pas de réponse après 30 secondes':e.message);}
+  inp.value='';}
+function shrink(file){return new Promise((res,rej)=>{const img=new Image(),url=URL.createObjectURL(file);
+  img.onload=()=>{const k=Math.min(1,1600/Math.max(img.width,img.height)),c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);
+    c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(url);res(c.toDataURL('image/jpeg',.85).split(',')[1]);};
+  img.onerror=()=>rej(new Error('image illisible'));img.src=url;});}
+async function aiWords(b64,key){const ctrl=new AbortController(),to=setTimeout(()=>ctrl.abort(),30000);
+  try{const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:ctrl.signal,headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body:JSON.stringify({model:(S.settings.model||DEF.settings.model).trim(),max_tokens:2000,messages:[{role:'user',content:[
+        {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
+        {type:'text',text:"Cette photo montre une page de vocabulaire d'allemand d'un élève de 5P à Genève (cahier Wort-Schatz). Liste les mots et expressions allemands avec leur traduction française (traduis-les si elle n'est pas écrite). Garde l'article der/die/das des noms. Orthographe suisse : ss, jamais ß. Réponds uniquement en JSON, sans texte autour : {\"words\":[{\"de\":\"der Hund\",\"fr\":\"le chien\"}]}"}]}]})});
+    if(!res.ok){let msg='erreur '+res.status;try{const j=await res.json();if(j.error&&j.error.message)msg+=' ('+j.error.message+')';}catch(e){}throw new Error(msg);}
+    const data=await res.json(),text=(data.content||[]).filter(b=>b.type==='text').map(b=>b.text).join('');
+    const j=JSON.parse(text.slice(text.indexOf('{'),text.lastIndexOf('}')+1));
+    return (j.words||[]).filter(w=>w&&w.de&&w.fr).map(w=>({de:String(w.de).trim().replace(/ß/g,'ss'),fr:String(w.fr).trim()}));
+  }finally{clearTimeout(to);}}
+function parseWords(t){const seen=new Set();return t.split('\n').map(l=>l.split('=')).filter(p=>p.length>=2&&p[0].trim()&&p.slice(1).join('=').trim())
+  .map(p=>({de:p[0].trim().replace(/ß/g,'ss'),fr:p.slice(1).join('=').trim()})).filter(w=>{const k=w.de.toLowerCase();if(seen.has(k))return false;seen.add(k);return true;});}
+function weekHtml(){const since=Date.now()-7*864e5,h=S.history.filter(x=>new Date(x.d).getTime()>=since);
+  const n=h.reduce((t,x)=>t+x.n,0),c=h.reduce((t,x)=>t+x.c,0),mins=Math.round(h.reduce((t,x)=>t+(x.ms||0),0)/60000);
+  const days=new Set(h.map(x=>dstr(new Date(x.d)))).size;
+  const agg={};h.forEach(x=>{if(!findTheme(x.k))return;const a=agg[x.k]||(agg[x.k]={c:0,n:0});a.c+=x.c;a.n+=x.n;});
+  const hard=Object.entries(agg).filter(([,a])=>a.n>=10&&a.c/a.n<.6).map(([k,a])=>`${esc(findTheme(k).name)} (${Math.round(100*a.c/a.n)} %)`).join(', ');
+  const errs=Object.values(S.review).sort((a,b)=>b.n-a.n).slice(0,5).map(r=>`<li>${r.q.listen?'Écoute':esc(r.q.q.replace(/___/g,'…'))} → <b>${esc(r.q.answer)}</b>${r.n>1?` (raté ${r.n} fois)`:''}</li>`).join('');
+  const nb=Object.keys(S.review).length,due=dueList().length,books=Object.values(S.books).filter(v=>v==='lu').length;
+  return `<section class="psec"><h2>Cette semaine</h2>
+  <div class="kpis"><div><b>${days}</b><small>jour${days>1?'s':''} d’exercices</small></div><div><b>${mins}</b><small>minute${mins>1?'s':''}</small></div><div><b>${n?Math.round(100*c/n)+' %':'–'}</b><small>de réussite sur ${n} question${n>1?'s':''}</small></div></div>
+  <p class="note"><b>Ça coince :</b> ${hard||'rien de particulier'}</p>
+  <p class="note"><b>Erreurs qui reviennent :</b></p><ul class="hist">${errs||'<li>Aucune pour le moment.</li>'}</ul>
+  <p class="note">${nb} question${nb>1?'s':''} en révision, dont ${due} à revoir aujourd’hui. Livres lus validés : ${books}.</p></section>`;}
+function readParent(){const g=id=>document.getElementById(id);if(!g('p-name'))return;
+  const nm=g('p-name').value.trim();if(nm)S.name=nm;
+  S.settings.ai=g('p-ai').checked;S.settings.apiKey=g('p-key').value.trim();S.settings.model=g('p-model').value.trim()||DEF.settings.model;
+  const wt=g('p-words');if(wt)S.words=parseWords(wt.value);
+  document.querySelectorAll('select[data-lv]').forEach(sel=>{rec(sel.dataset.lv).level=+sel.value;});}
+
+/* ================= Actions ================= */
+const ACT={
+  go:v=>nav(v),
+  subj:v=>{curSubj=v;nav('subject');},
+  play:v=>{if(v==='de.semaine'&&S.words.length<4){alert('Demande à un parent d’ajouter au moins 4 mots de la semaine dans l’espace parents.');return;}curSubj=v.split('.')[0];startQuiz(v);},
+  defi:()=>startDefi(),
+  revision:()=>startRevision(),
+  avatar:v=>{S.avatar=v;document.querySelectorAll('.av').forEach(b=>b.classList.toggle('sel',b.dataset.v===v));},
+  start:()=>{const nm=document.getElementById('nm'),v=(nm.value||'').trim();
+    if(!v){nm.classList.add('shake');nm.focus();setTimeout(()=>nm.classList.remove('shake'),500);return;}
+    S.name=v;save();nav('home');},
+  choice:v=>answer(SES.cur.choices[+v]),
+  key:v=>{if(SES&&!SES.answered&&SES.buf.length<5){SES.buf+=v;updDisplay();}},
+  del:()=>{if(SES&&!SES.answered){SES.buf=SES.buf.slice(0,-1);updDisplay();}},
+  ok:()=>{if(SES&&SES.buf!=='')answer(SES.buf);},
+  next:()=>nextStep(),
+  quit:()=>{if(confirm('Arrêter les exercices ?')){const m=SES&&SES.mode;SES=null;save();nav(m==='theme'?'subject':'home');}},
+  cancelLoad:()=>{SES=null;nav('subject');},
+  sayQ:()=>{const q=SES&&SES.cur;if(q&&q.say)speak(q.say.text,q.say.lang);},
+  readQ:()=>{if(SES)speak(SES.cur.q.replace(/___/g,'…'),'fr-FR');},
+  sound:()=>{S.settings.sound=!S.settings.sound;save();render();},
+  parent:()=>{gatePurpose=null;pinBuf='';gateMsg='';nav('gate');},
+  pkey:v=>{if(pinBuf.length<4){pinBuf+=v;if(pinBuf.length===4)checkPin();else render();}},
+  pdel:()=>{pinBuf=pinBuf.slice(0,-1);render();},
+  pok:()=>checkPin(),
+  psave:()=>{readParent();save();nav('home');},
+  ptest:async()=>{readParent();save();const out=document.getElementById('p-test');
+    if(!S.settings.apiKey){out.textContent='Ajoutez d\'abord une clé API.';return;}
+    out.textContent='Test en cours…';
+    try{const q=await aiQuestions(SUBJ[0],SUBJ[0].themes[2],1,1);testMsg=q.length?'Ça marche ! Exemple : '+q[0].q:'Réponse reçue, mais sans question utilisable.';}
+    catch(e){testMsg='Échec : '+(e.name==='AbortError'?'pas de réponse après 20 secondes':e.message);}
+    const o2=document.getElementById('p-test');if(o2)o2.textContent=testMsg;},
+  pexport:async()=>{readParent();save();const d=clone(S);d.settings.apiKey='';d.pin='';const txt=JSON.stringify(d);
+    const ta=document.getElementById('p-bak'),m=document.getElementById('p-bakmsg');ta.value=txt;
+    try{await navigator.clipboard.writeText(txt);m.textContent='Sauvegarde copiée. Collez-la dans une note ou un message.';}
+    catch(e){ta.select();m.textContent='Le texte est prêt dans la case : sélectionnez-le et copiez-le.';}},
+  pimport:()=>{const ta=document.getElementById('p-bak'),m=document.getElementById('p-bakmsg');
+    try{const r=JSON.parse(ta.value);if(!r||!r.v)throw new Error();const keep={apiKey:S.settings.apiKey,pin:S.pin};
+      S=mergeState(r);S.settings.apiKey=keep.apiKey;S.pin=keep.pin;save();render();
+      const m2=document.getElementById('p-bakmsg');if(m2)m2.textContent='Progression restaurée.';}
+    catch(e){m.textContent='Ce texte n\'est pas une sauvegarde valide.';}},
+  btab:v=>{bookTab=v;nav('books');},
+  bstat:v=>{const [id,st]=v.split('|'),y=window.scrollY;
+    if(S.books[id]===st)delete S.books[id];
+    else if(st==='lu'){gatePurpose={type:'book',id};pinBuf='';gateMsg='';nav('gate');return;}
+    else S.books[id]=st;
+    save();render();window.scrollTo(0,y);},
+  badd:()=>{const ti=document.getElementById('b-title'),t=(ti.value||'').trim();
+    if(!t){ti.classList.add('shake');ti.focus();setTimeout(()=>ti.classList.remove('shake'),500);return;}
+    const b={id:'c'+Date.now(),cat:document.getElementById('b-cat').value,e:'📗',t,custom:true};
+    S.myBooks.push(b);S.books[b.id]='envie';save();render();},
+  bdel:v=>{S.myBooks=S.myBooks.filter(b=>b.id!==v);delete S.books[v];save();render();},
+  pchpin:()=>{gatePurpose=null;readParent();S.pin='';save();pinBuf='';gateMsg='';nav('gate');},
+  preset:()=>{if(confirm('Effacer toute la progression (étoiles, niveaux, autocollants) ?')){S.stars=0;S.themes={};S.history=[];S.review={};S.defi='';S.bookStars={};S.streak={count:0,last:''};save();render();}}
+};
+function updDisplay(){const d=document.querySelector('.display');if(d)d.innerHTML=esc(SES.buf)||'&nbsp;';}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-a]');if(!b||b.disabled)return;const f=ACT[b.dataset.a];if(f)f(b.dataset.v,b);});
+document.addEventListener('change',e=>{if(e.target&&e.target.id==='p-photo')readPhoto(e.target);});
+document.addEventListener('keydown',e=>{
+  if(screen!=='quiz'||!SES)return;
+  if(SES.answered){if(e.key==='Enter'){e.preventDefault();nextStep();}return;}
+  if(SES.cur.type==='num'){if(/^[0-9]$/.test(e.key))ACT.key(e.key);else if(e.key==='Backspace')ACT.del();else if(e.key==='Enter')ACT.ok();}
+});
+/* Bouton retour Android (plugin @capacitor/app) */
+try{const App=window.Capacitor&&window.Capacitor.Plugins&&window.Capacitor.Plugins.App;
+  if(App)App.addListener('backButton',()=>{
+    if(screen==='home'||screen==='onboard')App.exitApp();
+    else if(screen==='quiz')ACT.quit();
+    else if(screen==='loading')ACT.cancelLoad();
+    else if(screen==='result')nav(RES&&RES.mode==='theme'?'subject':'home');
+    else if(screen==='gate'&&gatePurpose){gatePurpose=null;nav('books');}
+    else if(screen==='parent')ACT.psave();
+    else nav('home');});}catch(e){}
+
+render();
+</script>
+</body>
+</html>
