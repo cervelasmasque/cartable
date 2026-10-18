@@ -1,3 +1,5 @@
+name: Construire l'APK
+
 on:
   push:
     branches: [main]
@@ -31,6 +33,14 @@ jobs:
         run: |
           npx cap add android
           npx cap sync android
+
+      - name: Mettre l'icône Cartable
+        run: |
+          if [ -d icone/res ]; then
+            cp -r icone/res/. android/app/src/main/res/
+          else
+            echo "::warning::dossier icone/res absent : icône par défaut"
+          fi
 
       - name: Garder toujours la même signature
         run: |
